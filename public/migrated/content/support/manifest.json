@@ -1,0 +1,17 @@
+{
+  "pageUrl": "https:/www.diversyfund.com/support/",
+  "pageId": "support",
+  "crawledAt": "2026-03-10T00:21:59.913Z",
+  "images": [
+    {
+      "index": 0,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/df-logo.png",
+      "localPath": "/migrated/home/home-0.png"
+    },
+    {
+      "index": 1,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/682150673dc65fa89ad59bd2_logo.png",
+      "localPath": "/migrated/home/home-22.png"
+    }
+  ]
+}

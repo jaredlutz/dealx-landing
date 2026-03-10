@@ -1,0 +1,22 @@
+{
+  "pageUrl": "https:/www.diversyfund.com/investment-opportunities/",
+  "pageId": "investment_opportunities",
+  "crawledAt": "2026-03-10T00:21:54.102Z",
+  "images": [
+    {
+      "index": 0,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/df-logo.png",
+      "localPath": "/migrated/home/home-0.png"
+    },
+    {
+      "index": 1,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/620197fcccbb2748f1f2696c_Village-Creek-3-p-500.jpeg",
+      "localPath": "/migrated/home/home-14.jpeg"
+    },
+    {
+      "index": 2,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/682150673dc65fa89ad59bd2_logo.png",
+      "localPath": "/migrated/home/home-22.png"
+    }
+  ]
+}

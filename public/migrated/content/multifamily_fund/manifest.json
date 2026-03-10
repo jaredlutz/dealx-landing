@@ -1,0 +1,72 @@
+{
+  "pageUrl": "https:/www.diversyfund.com/multifamily-investment-fund/",
+  "pageId": "multifamily_fund",
+  "crawledAt": "2026-03-10T00:21:56.247Z",
+  "images": [
+    {
+      "index": 0,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/df-logo.png",
+      "localPath": "/migrated/home/home-0.png"
+    },
+    {
+      "index": 1,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/001-diversification.png",
+      "localPath": "/migrated/content/multifamily_fund/img-1.png"
+    },
+    {
+      "index": 2,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/008-house-2.png",
+      "localPath": "/migrated/content/multifamily_fund/img-2.png"
+    },
+    {
+      "index": 3,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/004-cash-flow.png",
+      "localPath": "/migrated/content/multifamily_fund/img-3.png"
+    },
+    {
+      "index": 4,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/005-professional-services.png",
+      "localPath": "/migrated/content/multifamily_fund/img-4.png"
+    },
+    {
+      "index": 5,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/elementor/thumbs/006-capital-1-rfebhe3dk0ywlr80vokjthoy5l2y7dp3k6ebi3sst4.png",
+      "localPath": "/migrated/content/multifamily_fund/img-5.png"
+    },
+    {
+      "index": 6,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/elementor/thumbs/007-land-1-rfebhf17qv06xd6nq6z6dzgeqyybf2stwb1szdremw.png",
+      "localPath": "/migrated/content/multifamily_fund/img-6.png"
+    },
+    {
+      "index": 7,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/elementor/thumbs/return-of-investment-rfekcovp502eh5f7e797bf0umlalxyalskb5awdd5k.png",
+      "localPath": "/migrated/content/multifamily_fund/img-7.png"
+    },
+    {
+      "index": 8,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/elementor/thumbs/capital-appreciation-rfekcweenocp214a6ai7vd4jdo9jnj4ghlj15427rs.png",
+      "localPath": "/migrated/content/multifamily_fund/img-8.png"
+    },
+    {
+      "index": 9,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/elementor/thumbs/investment-rfekciatt5te7vorgmetbyomgw71g2khfnqqxyn4d4.png",
+      "localPath": "/migrated/content/multifamily_fund/img-9.png"
+    },
+    {
+      "index": 10,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/elementor/thumbs/011-distribution-1-rfebhf17qv06xd6nq6z6dzgeqyybf2stwb1szdremw.png",
+      "localPath": "/migrated/content/multifamily_fund/img-10.png"
+    },
+    {
+      "index": 11,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/620197fcccbb2748f1f2696c_Village-Creek-3-p-500.jpeg",
+      "localPath": "/migrated/home/home-14.jpeg"
+    },
+    {
+      "index": 12,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/682150673dc65fa89ad59bd2_logo.png",
+      "localPath": "/migrated/home/home-22.png"
+    }
+  ]
+}

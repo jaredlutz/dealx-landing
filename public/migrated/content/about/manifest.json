@@ -1,0 +1,57 @@
+{
+  "pageUrl": "https:/www.diversyfund.com/about-us/",
+  "pageId": "about",
+  "crawledAt": "2026-03-10T00:21:53.244Z",
+  "images": [
+    {
+      "index": 0,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/df-logo.png",
+      "localPath": "/migrated/home/home-0.png"
+    },
+    {
+      "index": 1,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/diversyfund-rs.jpg",
+      "localPath": "/migrated/home/home-1.jpg"
+    },
+    {
+      "index": 2,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/001-team-1.png",
+      "localPath": "/migrated/content/about/img-2.png"
+    },
+    {
+      "index": 3,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/010-stakeholder-2.png",
+      "localPath": "/migrated/content/about/img-3.png"
+    },
+    {
+      "index": 4,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/005-asset-1.png",
+      "localPath": "/migrated/content/about/img-4.png"
+    },
+    {
+      "index": 5,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/008-reputation-1.png",
+      "localPath": "/migrated/content/about/img-5.png"
+    },
+    {
+      "index": 6,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/idea.png",
+      "localPath": "/migrated/content/about/img-6.png"
+    },
+    {
+      "index": 7,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/013-transparency.png",
+      "localPath": "/migrated/content/about/img-7.png"
+    },
+    {
+      "index": 8,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/014-wealth-accumulation.png",
+      "localPath": "/migrated/content/about/img-8.png"
+    },
+    {
+      "index": 9,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/682150673dc65fa89ad59bd2_logo.png",
+      "localPath": "/migrated/home/home-22.png"
+    }
+  ]
+}

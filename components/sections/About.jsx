@@ -1,0 +1,47 @@
+import { brand, cn } from "@/lib/theme";
+import Container from "@/components/ui/Container";
+import SectionTitle from "@/components/ui/SectionTitle";
+import Card from "@/components/ui/Card";
+
+export default function About() {
+  return (
+    <section id="about" className="pt-16">
+      <Container>
+        <SectionTitle
+          eyebrow="About"
+          title="Institutional discipline. Operator execution."
+          subtitle="DiversyFund is built for disciplined private-market income structures. We do not chase trends—we design frameworks and execute them through cycles."
+        />
+
+        <div className="mt-8 grid gap-4 lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <Card>
+              <div className="text-white font-semibold text-lg">Cycle-tested leadership</div>
+              <p className={cn("mt-3 text-sm leading-relaxed", brand.muted)}>
+                Craig Cecilio began structuring income-focused real estate vehicles in the late 1990s. That multi-cycle
+                experience informs how DiversyFund approaches risk, duration design, documentation, and execution cadence.
+              </p>
+              <div className={cn("mt-4 text-sm", brand.muted)}>
+                • Markets fluctuate. Discipline compounds.
+                <br />• Private markets reward structure over optimism.
+              </div>
+            </Card>
+          </div>
+          <div className="lg:col-span-5">
+            <Card>
+              <div className="text-white font-semibold text-lg">What we are not</div>
+              <div className={cn("mt-3 text-sm", brand.muted)}>
+                <div className="mt-1">• Not retail speculation</div>
+                <div className="mt-1">• Not "yield marketing"</div>
+                <div className="mt-1">• Not trend-driven finance</div>
+              </div>
+              <div className={cn("mt-5 text-sm", brand.muted)}>
+                We are structured private-market income—designed for capital that expects standards.
+              </div>
+            </Card>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}

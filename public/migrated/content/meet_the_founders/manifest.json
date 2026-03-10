@@ -1,0 +1,27 @@
+{
+  "pageUrl": "https:/www.diversyfund.com/meet-the-founders/",
+  "pageId": "meet_the_founders",
+  "crawledAt": "2026-03-10T00:16:19.309Z",
+  "images": [
+    {
+      "index": 0,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/df-logo.png",
+      "localPath": "/migrated/home/home-0.png"
+    },
+    {
+      "index": 1,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/68237a94c2a8fe20a6f9e394_image-11.png",
+      "localPath": "/migrated/content/meet_the_founders/img-1.png"
+    },
+    {
+      "index": 2,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/68237a94c2a8fe20a6f9e39a_image-12.png",
+      "localPath": "/migrated/content/meet_the_founders/img-2.png"
+    },
+    {
+      "index": 3,
+      "sourceUrl": "https://diversyfund.com/wp-content/uploads/2025/10/682150673dc65fa89ad59bd2_logo.png",
+      "localPath": "/migrated/home/home-22.png"
+    }
+  ]
+}
