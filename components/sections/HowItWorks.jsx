@@ -20,7 +20,7 @@ export default function HowItWorks() {
         <SectionTitle
           eyebrow="Process"
           title="A defined capital process"
-          subtitle="No ambiguity. No moving goalposts. Private markets require clarity—and a professional operational rhythm."
+          subtitle="No ambiguity. No moving goalposts. A professional operational rhythm."
         />
 
         <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -29,7 +29,7 @@ export default function HowItWorks() {
               <div className="flex items-start gap-3">
                 <s.icon className={cn("h-5 w-5", brand.gold)} />
                 <div>
-                  <div className="text-white font-semibold">{s.title}</div>
+                  <div className={cn("font-semibold", brand.text)}>{s.title}</div>
                   <p className={cn("mt-2 text-sm", brand.muted)}>{s.desc}</p>
                 </div>
               </div>

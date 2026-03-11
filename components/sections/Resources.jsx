@@ -26,12 +26,12 @@ export default function Resources() {
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {firstFour.map((a) => (
             <Card key={a.title}>
-              <div className="text-white font-semibold">{a.title}</div>
+              <div className={cn("font-semibold", brand.text)}>{a.title}</div>
               <p className={cn("mt-2 text-sm", brand.muted)}>{a.desc}</p>
               <div className="mt-4">
                 <a
                   href="#"
-                  className="text-sm font-semibold text-white hover:text-white/80 transition focus:outline-none focus:ring-2 focus:ring-white/25 focus-visible:ring-2 focus-visible:ring-white/40 rounded px-2 -mx-2 py-1 inline-block"
+                  className={cn("text-sm font-semibold rounded px-2 -mx-2 py-2 inline-flex items-center min-h-[44px] transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40 focus-visible:ring-2 focus-visible:ring-diversy-primary/50", brand.accent, "hover:underline")}
                 >
                   Read →
                 </a>
@@ -43,12 +43,12 @@ export default function Resources() {
         {featured && (
           <div className="mt-4 flex justify-center">
             <Card className="w-full max-w-2xl">
-              <div className="text-white font-semibold">{featured.title}</div>
+              <div className={cn("font-semibold", brand.text)}>{featured.title}</div>
               <p className={cn("mt-2 text-sm", brand.muted)}>{featured.desc}</p>
               <div className="mt-4">
                 <a
                   href="#"
-                  className="text-sm font-semibold text-white hover:text-white/80 transition focus:outline-none focus:ring-2 focus:ring-white/25 focus-visible:ring-2 focus-visible:ring-white/40 rounded px-2 -mx-2 py-1 inline-block"
+                  className={cn("text-sm font-semibold rounded px-2 -mx-2 py-2 inline-flex items-center min-h-[44px] transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40 focus-visible:ring-2 focus-visible:ring-diversy-primary/50", brand.accent, "hover:underline")}
                 >
                   Read →
                 </a>

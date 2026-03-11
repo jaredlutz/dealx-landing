@@ -17,14 +17,14 @@ export default function Login() {
           <Card className="mt-8 p-6">
             <a
               href={getSignInUrl()}
-              className="block w-full rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-[#060B12] hover:bg-white/90 transition focus:outline-none focus:ring-2 focus:ring-white/25 focus-visible:ring-2 focus-visible:ring-white/40"
+              className="block w-full rounded-xl bg-diversy-primary px-4 py-3 text-center text-sm font-semibold text-white hover:bg-diversy-primary-hover transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40 focus-visible:ring-2 focus-visible:ring-diversy-primary/50"
             >
               Continue to portal
             </a>
             <div className={cn("mt-4 flex flex-col gap-1 text-xs", brand.subtle)}>
               <a
                 href="mailto:investorsupport@diversyfund.com"
-                className="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-white/25 focus-visible:ring-2 focus-visible:ring-white/40 rounded px-2 -mx-2 py-1 inline-block"
+                className={cn("transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40 focus-visible:ring-2 focus-visible:ring-diversy-primary/50 rounded px-2 -mx-2 py-1 inline-block", brand.text, "hover:opacity-80")}
               >
                 Forgot password? Email investorsupport@diversyfund.com
               </a>

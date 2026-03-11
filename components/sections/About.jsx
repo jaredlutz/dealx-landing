@@ -8,18 +8,26 @@ export default function About() {
     <section id="about" className="pt-16">
       <Container>
         <SectionTitle
-          eyebrow="About"
-          title="Institutional discipline. Operator execution."
-          subtitle="DiversyFund is built for disciplined private-market income structures. We do not chase trends—we design frameworks and execute them through cycles."
+          eyebrow="Leadership"
+          title="Built by operators"
+          titleSize="large"
         />
+        <p className={cn("mt-3 max-w-3xl text-base leading-relaxed", brand.muted)}>
+          Craig Cecilio has spent over two decades structuring real estate investments through multiple market cycles.
+        </p>
+        <p className={cn("mt-2 max-w-3xl text-base leading-relaxed", brand.muted)}>
+          DiversyFund reflects that experience—focusing on structures designed to perform across changing conditions.
+        </p>
 
         <div className="mt-8 grid gap-4 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <Card>
-              <div className="text-white font-semibold text-lg">Cycle-tested leadership</div>
+              <div className={cn("font-semibold text-lg", brand.text)}>Cycle-tested leadership</div>
               <p className={cn("mt-3 text-sm leading-relaxed", brand.muted)}>
-                Craig Cecilio began structuring income-focused real estate vehicles in the late 1990s. That multi-cycle
-                experience informs how DiversyFund approaches risk, duration design, documentation, and execution cadence.
+                DiversyFund leadership has structured and managed real estate investments across multiple market cycles since the late 1990s.
+              </p>
+              <p className={cn("mt-2 text-sm leading-relaxed", brand.muted)}>
+                Craig Cecilio began structuring income-focused real estate vehicles in the late 1990s. That experience informs how we approach risk, duration design, documentation, and execution cadence.
               </p>
               <div className={cn("mt-4 text-sm", brand.muted)}>
                 • Markets fluctuate. Discipline compounds.
@@ -29,10 +37,10 @@ export default function About() {
           </div>
           <div className="lg:col-span-5">
             <Card>
-              <div className="text-white font-semibold text-lg">What we are not</div>
+              <div className={cn("font-semibold text-lg", brand.text)}>What we are not</div>
               <div className={cn("mt-3 text-sm", brand.muted)}>
                 <div className="mt-1">• Not retail speculation</div>
-                <div className="mt-1">• Not "yield marketing"</div>
+                <div className="mt-1">• Not &quot;yield marketing&quot;</div>
                 <div className="mt-1">• Not trend-driven finance</div>
               </div>
               <div className={cn("mt-5 text-sm", brand.muted)}>

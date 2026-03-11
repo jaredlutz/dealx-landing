@@ -41,7 +41,7 @@ export default function Governance() {
         <SectionTitle
           eyebrow="Security & Governance"
           title="Governance. Structure. Discipline."
-          subtitle="Security-first means documentation-first. Serious capital expects disclosed terms, defined mechanics, and consistent reporting."
+          subtitle="Serious capital expects disclosed terms, defined mechanics, and consistent reporting."
         />
 
         <div className="mt-8 grid gap-4 lg:grid-cols-3">
@@ -50,7 +50,7 @@ export default function Governance() {
               <div className="flex items-start gap-3">
                 <b.icon className={cn("h-5 w-5", brand.gold)} />
                 <div>
-                  <div className="text-white font-semibold">{b.title}</div>
+                  <div className={cn("font-semibold", brand.text)}>{b.title}</div>
                   <div className={cn("mt-3 text-sm", brand.muted)}>
                     {b.points.map((p) => (
                       <div key={p} className="mt-1">• {p}</div>
@@ -62,11 +62,10 @@ export default function Governance() {
           ))}
         </div>
 
-        <div className={cn("mt-8 rounded-2xl border border-white/10 bg-white/4 p-6 max-w-4xl")}>
-          <div className="text-white font-semibold">Risk statement</div>
+        <div className={cn("mt-8 rounded-2xl border p-6 max-w-4xl", brand.border, brand.panel)}>
+          <div className={cn("font-semibold", brand.text)}>Risk statement</div>
           <p className={cn("mt-2 text-sm leading-relaxed", brand.muted)}>
-            Investing involves risk, including loss of principal. Private-market investments may be illiquid. Terms, cadence,
-            and maturity mechanics are defined by each offering's documentation.
+            Investing involves risk, including loss of principal. Private-market investments may be illiquid. Terms and maturity are defined by each offering&apos;s documentation.
           </p>
         </div>
       </Container>

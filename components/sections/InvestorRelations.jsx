@@ -14,8 +14,8 @@ export default function InvestorRelations() {
           <div className="lg:col-span-7">
             <SectionTitle
               eyebrow="Investor Relations"
-              title="Access opportunities"
-              subtitle="Eligibility review is required to access full offering documentation. If you allocate meaningful capital and want defined terms, start here."
+              title="Access current income investments"
+              subtitle="Eligibility review is required to access full offering documentation. Start here if you allocate meaningful capital and want defined terms."
             />
 
             <div className="mt-8 grid gap-4 md:grid-cols-2">
@@ -23,7 +23,7 @@ export default function InvestorRelations() {
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className={cn("h-5 w-5", brand.gold)} />
                   <div>
-                    <div className="text-white font-semibold">Eligibility</div>
+                    <div className={cn("font-semibold", brand.text)}>Eligibility</div>
                     <p className={cn("mt-2 text-sm", brand.muted)}>
                       Confirm investor profile and access requirements to view documentation.
                     </p>
@@ -34,7 +34,7 @@ export default function InvestorRelations() {
                 <div className="flex items-start gap-3">
                   <Lock className={cn("h-5 w-5", brand.gold)} />
                   <div>
-                    <div className="text-white font-semibold">Verification</div>
+                    <div className={cn("font-semibold", brand.text)}>Verification</div>
                     <p className={cn("mt-2 text-sm", brand.muted)}>
                       Compliance verification (KYC/AML) may be required based on jurisdiction and offering.
                     </p>
@@ -43,14 +43,14 @@ export default function InvestorRelations() {
               </Card>
             </div>
 
-            <div className="mt-8 rounded-2xl border border-white/10 bg-white/4 p-6">
-              <div className="text-white font-semibold">Contact</div>
+            <div className={cn("mt-8 rounded-2xl border p-6", brand.border, brand.panel)}>
+              <div className={cn("font-semibold", brand.text)}>Contact</div>
               <div className="mt-3 flex items-center gap-3">
                 <Mail className={cn("h-4 w-4 shrink-0", brand.gold)} />
                 <div>
                   <a
                     href="mailto:investorsupport@diversyfund.com"
-                    className={cn("text-sm hover:text-white transition focus:outline-none focus:ring-2 focus:ring-white/25 focus-visible:ring-2 focus-visible:ring-white/40 rounded px-2 -mx-2 py-1 inline-block", brand.text)}
+                    className={cn("text-sm transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40 focus-visible:ring-2 focus-visible:ring-diversy-primary/50 rounded px-2 -mx-2 py-1 inline-block", brand.text, "hover:opacity-80")}
                   >
                     investorsupport@diversyfund.com
                   </a>
@@ -64,13 +64,13 @@ export default function InvestorRelations() {
           </div>
 
           <div className="lg:col-span-5">
-            <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6">
-              <div className="text-white font-semibold text-lg">Get started</div>
+            <div className={cn("rounded-3xl border p-6", brand.border, "bg-gradient-to-b from-gray-100 to-gray-50 dark:from-white/10 dark:to-white/5")}>
+              <div className={cn("font-semibold text-lg", brand.text)}>Get started</div>
               <p className={cn("mt-2 text-sm leading-relaxed", brand.muted)}>
                 Create an account and complete eligibility review to access full offering documentation, onboarding, and platform access.
               </p>
               <div className="mt-6">
-                <Button href={getSignUpUrl()}>Begin Eligibility Review</Button>
+                <Button href={getSignUpUrl()}>Start Eligibility Review</Button>
               </div>
             </div>
           </div>

@@ -6,22 +6,23 @@ import { getSignUpUrl, getSignInUrl } from "@/lib/portal";
 import { brand, cn } from "@/lib/theme";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
+import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
 const nav = [
   { id: "home", label: "Home" },
   { id: "opps", label: "Opportunities" },
-  { id: "how", label: "How It Works" },
-  { id: "gov", label: "Security & Governance" },
+  { id: "how", label: "Process" },
+  { id: "gov", label: "Governance" },
   { id: "about", label: "About" },
   { id: "resources", label: "Resources" },
-  { id: "ir", label: "Investor Relations" },
+  { id: "ir", label: "Access" },
 ];
 
 export default function TopNav({ active, setActive }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="sticky top-0 z-40 border-b border-white/10 bg-[#060B12]/85 backdrop-blur">
+    <div className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur dark:border-white/10 dark:bg-diversy-dark/95">
       <Container className="flex items-center justify-between py-3">
         <a
           href="#home"
@@ -29,24 +30,26 @@ export default function TopNav({ active, setActive }) {
           className="flex items-center gap-3"
         >
           <img
+            src="/images/diversyfund-logo.svg"
+            alt="DiversyFund"
+            className="h-9 w-auto dark:hidden"
+          />
+          <img
             src="/images/diversyfund-logo-white.svg"
             alt="DiversyFund"
-            className="h-8 w-auto"
+            className="hidden h-9 w-auto dark:block"
           />
-          <div className="leading-tight hidden sm:block">
-            <div className={cn("text-xs", brand.subtle)}>Institutional Fixed Income</div>
-          </div>
         </a>
 
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden lg:flex items-center gap-0.5">
           {nav.map((n) => (
             <a
               key={n.id}
               href={`#${n.id}`}
               onClick={() => setActive(n.id)}
               className={cn(
-                "rounded-lg px-3 py-2 text-sm transition focus:outline-none focus:ring-2 focus:ring-white/25 focus-visible:ring-2 focus-visible:ring-white/40",
-                active === n.id ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5 hover:text-white"
+                "rounded-md px-2.5 py-1.5 text-sm transition focus:outline-none focus:ring-1 focus:ring-diversy-primary/40",
+                active === n.id ? "bg-diversy-primary/15 text-gray-900 dark:text-white font-medium" : "text-gray-600 hover:bg-gray-100/80 hover:text-gray-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white"
               )}
             >
               {n.label}
@@ -55,21 +58,22 @@ export default function TopNav({ active, setActive }) {
         </div>
 
         <div className="flex items-center gap-2">
+          <ThemeSwitcher />
           <a
             href={getSignInUrl()}
-            className="hidden sm:inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/0 px-4 py-2 text-sm font-semibold text-white hover:bg-white/5 transition focus:outline-none focus:ring-2 focus:ring-white/25 focus-visible:ring-2 focus-visible:ring-white/40"
+            className="hidden sm:inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-transparent px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-white/20 dark:text-white/80 dark:hover:bg-white/5 transition"
           >
             <Lock className="h-4 w-4" />
             Log In
           </a>
            <span className="hidden sm:inline-flex">
-            <Button href={getSignUpUrl()} onClick={() => setActive("ir")}>Access Opportunities</Button>
+            <Button href={getSignUpUrl()} onClick={() => setActive("opps")}>See Opportunities</Button>
           </span>
 
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-white/25 focus-visible:ring-2 focus-visible:ring-white/40"
+            className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40"
             aria-expanded={mobileOpen}
             aria-label="Toggle menu"
           >
@@ -79,7 +83,7 @@ export default function TopNav({ active, setActive }) {
       </Container>
 
       {mobileOpen && (
-        <div className="md:hidden border-t border-white/10 bg-[#060B12]">
+        <div className="lg:hidden border-t border-gray-200 bg-white dark:border-white/10 dark:bg-diversy-dark">
           <Container className="py-4">
             <div className="flex flex-col gap-1">
               {nav.map((n) => (
@@ -89,7 +93,7 @@ export default function TopNav({ active, setActive }) {
                   onClick={() => { setActive(n.id); setMobileOpen(false); }}
                   className={cn(
                     "rounded-lg px-4 py-3 text-sm transition",
-                    active === n.id ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5 hover:text-white"
+                    active === n.id ? "bg-diversy-primary/20 text-gray-900 dark:text-white" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white"
                   )}
                 >
                   {n.label}
@@ -97,16 +101,16 @@ export default function TopNav({ active, setActive }) {
               ))}
               <a
                 href={getSignInUrl()}
-                className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm text-white/70 hover:bg-white/5 hover:text-white transition"
+                className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white transition"
               >
                 <Lock className="h-4 w-4" />
                 Log In
               </a>
               <a
                 href={getSignUpUrl()}
-                className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#060B12] hover:bg-white/90 transition mx-4 mt-2"
+                className="flex items-center justify-center gap-2 rounded-xl bg-diversy-primary px-4 py-3 text-sm font-semibold text-white hover:bg-diversy-primary-hover transition mx-4 mt-2"
               >
-                Access Opportunities
+                See Opportunities
               </a>
             </div>
           </Container>

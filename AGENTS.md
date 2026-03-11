@@ -19,3 +19,4 @@
 - Migrated images: public/migrated/home and public/migrated/content/{pageId}
 - migrate-urls.ts, crawl-home-images.ts, crawl-all-pages.ts, migrate-content-from-live.ts
 - DATABASE_URL required for DB; WorkOS vars required only when using /admin
+- V1 institutional homepage uses components/sections/ (Hero, TopNav, Positioning, Structures, etc.); V2 DiversyFund design in components/sections/home/; /homepage-old serves V2
