@@ -1,13 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, FileText, CalendarClock, CheckCircle2 } from "lucide-react";
+import { Shield, CheckCircle2 } from "lucide-react";
 import { getSignUpUrl } from "@/lib/portal";
 import { brand, cn } from "@/lib/theme";
 import Container from "@/components/ui/Container";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
 
 const HERO_STATS = [
   { value: "$300M+", label: "Real Estate Acquired" },
@@ -59,10 +58,10 @@ export default function Hero({ setActive }) {
               <Button href={getSignUpUrl()} onClick={() => setActive("opps")}>See Available Income Investments</Button>
               <Button
                 variant="secondary"
-                href="#gov"
-                onClick={() => setActive("gov")}
+                href="#opps"
+                onClick={() => setActive("opps")}
               >
-                Review Our Framework
+                See Opportunities
               </Button>
             </div>
 
@@ -70,35 +69,6 @@ export default function Hero({ setActive }) {
               Cycle-tested leadership since the 1990s • Process-driven governance • No yield marketing
             </div>
 
-            <div className="mt-10 grid gap-3 sm:grid-cols-3">
-              <Card>
-                <div className="flex items-start gap-3">
-                  <CalendarClock className={cn("h-5 w-5", brand.gold)} />
-                  <div>
-                    <div className={cn("font-semibold", brand.text)}>Quarterly cadence</div>
-                    <div className={cn("text-sm mt-1", brand.subtle)}>Schedule and reporting rhythm disclosed up front.</div>
-                  </div>
-                </div>
-              </Card>
-              <Card>
-                <div className="flex items-start gap-3">
-                  <FileText className={cn("h-5 w-5", brand.gold)} />
-                  <div>
-                    <div className={cn("font-semibold", brand.text)}>Documentation-first</div>
-                    <div className={cn("text-sm mt-1", brand.subtle)}>Terms and risk disclosed before subscription.</div>
-                  </div>
-                </div>
-              </Card>
-              <Card>
-                <div className="flex items-start gap-3">
-                  <Shield className={cn("h-5 w-5", brand.gold)} />
-                  <div>
-                    <div className={cn("font-semibold", brand.text)}>Security-focused</div>
-                    <div className={cn("text-sm mt-1", brand.subtle)}>Downside-aware structuring.</div>
-                  </div>
-                </div>
-              </Card>
-            </div>
           </div>
 
           <div className="lg:col-span-5">
@@ -125,13 +95,6 @@ export default function Hero({ setActive }) {
 
               <div className="mt-7 flex flex-col gap-3">
                 <Button href={getSignUpUrl()}>Start Eligibility Review</Button>
-                <a
-                  href="#resources"
-                  onClick={() => setActive("resources")}
-                  className={cn("text-sm transition", brand.muted, "hover:opacity-80")}
-                >
-                  Learn the basics of private-market fixed income →
-                </a>
               </div>
 
               <div className={cn("mt-6 text-xs", brand.subtle)}>

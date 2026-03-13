@@ -2,8 +2,9 @@
 
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import { getSignUpUrl } from "@/lib/portal";
+import { getSignUpUrl, getSignInUrl } from "@/lib/portal";
 import { brand, cn } from "@/lib/theme";
+import Container from "@/components/ui/Container";
 import TopNav from "@/components/sections/TopNav";
 import Hero from "@/components/sections/Hero";
 import WhyDiversyFund from "@/components/sections/WhyDiversyFund";
@@ -12,8 +13,12 @@ import HowReturnsGenerated from "@/components/sections/HowReturnsGenerated";
 import InvestmentTimeline from "@/components/sections/InvestmentTimeline";
 import Opportunities from "@/components/sections/Opportunities";
 import Footer from "@/components/sections/Footer";
+import WebinarHero from "@/components/webinar/WebinarHero";
+import WebinarValueProps from "@/components/webinar/WebinarValueProps";
+import WebinarPositioning from "@/components/webinar/WebinarPositioning";
+import WebinarTestimonials from "@/components/webinar/WebinarTestimonials";
 
-export default function LandingPage() {
+export default function LandingPageV2() {
   const [active, setActive] = React.useState("home");
 
   return (
@@ -21,12 +26,37 @@ export default function LandingPage() {
       <TopNav active={active} setActive={setActive} />
 
       <main className="pb-20 sm:pb-24">
+        {/* Home sections */}
         <Hero setActive={setActive} />
+        <WebinarHero />
         <Structures />
         <HowReturnsGenerated />
         <InvestmentTimeline />
         <WhyDiversyFund />
+        <WebinarValueProps />
+        <WebinarPositioning />
         <Opportunities />
+        <WebinarTestimonials />
+
+        {/* Access Your Account */}
+        <section className={cn("border-t py-16 sm:py-24", brand.border)}>
+          <Container>
+            <div className="mx-auto max-w-md text-center">
+              <h2 className={cn("text-2xl font-bold", brand.text)}>
+                Access Your Account
+              </h2>
+              <p className={cn("mt-2", brand.muted)}>
+                Log in to the DiversyFund platform to manage your investments.
+              </p>
+              <a
+                href={getSignInUrl()}
+                className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-diversy-primary px-8 py-4 text-base font-semibold text-white transition hover:bg-diversy-primary-hover focus:outline-none focus:ring-2 focus:ring-diversy-primary/50"
+              >
+                Log In
+              </a>
+            </div>
+          </Container>
+        </section>
       </main>
 
       <Footer />

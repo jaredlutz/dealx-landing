@@ -11,11 +11,6 @@ import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 const nav = [
   { id: "home", label: "Home" },
   { id: "opps", label: "Opportunities" },
-  { id: "how", label: "Process" },
-  { id: "gov", label: "Governance" },
-  { id: "about", label: "About" },
-  { id: "resources", label: "Resources" },
-  { id: "ir", label: "Access" },
 ];
 
 export default function TopNav({ active, setActive }) {
