@@ -7,6 +7,7 @@
 - Content pages must match the original structure (e.g. About: Hero, Mission, Stats, Values, Journey, Testimonials), not generic title+body
 - Site is public; only `/admin` requires auth
 - Prefer internal links over external diversyfund.com URLs when we have the page
+- Keep top nav minimal; avoid crowding with many menu items; no Portal login block in footer
 - Mariposa approach for site migration: URL mapping, content migration, image crawl, seed scripts
 
 ## Learned Workspace Facts
@@ -19,4 +20,4 @@
 - Migrated images: public/migrated/home and public/migrated/content/{pageId}
 - migrate-urls.ts, crawl-home-images.ts, crawl-all-pages.ts, migrate-content-from-live.ts
 - DATABASE_URL required for DB; WorkOS vars required only when using /admin
-- V1 institutional homepage uses components/sections/ (Hero, TopNav, Positioning, Structures, etc.); V2 DiversyFund design in components/sections/home/; /homepage-old serves V2
+- Main page (V1 institutional): Hero, Structures, WhyDiversyFund, Opportunities; TopNav minimal (Home, Opportunities); /homepage-old has V2 design; /v2 merges home + v3; /v3 is portal-login focused

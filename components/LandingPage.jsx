@@ -6,11 +6,10 @@ import { getSignUpUrl } from "@/lib/portal";
 import { brand, cn } from "@/lib/theme";
 import TopNav from "@/components/sections/TopNav";
 import Hero from "@/components/sections/Hero";
-import WhyDiversyFund from "@/components/sections/WhyDiversyFund";
 import Structures from "@/components/sections/Structures";
-import HowReturnsGenerated from "@/components/sections/HowReturnsGenerated";
-import InvestmentTimeline from "@/components/sections/InvestmentTimeline";
 import Opportunities from "@/components/sections/Opportunities";
+import Positioning from "@/components/sections/Positioning";
+import Testimonials from "@/components/sections/Testimonials";
 import Footer from "@/components/sections/Footer";
 
 export default function LandingPage() {
@@ -23,10 +22,9 @@ export default function LandingPage() {
       <main className="pb-20 sm:pb-24">
         <Hero setActive={setActive} />
         <Structures />
-        <HowReturnsGenerated />
-        <InvestmentTimeline />
-        <WhyDiversyFund />
         <Opportunities />
+        <Positioning />
+        <Testimonials />
       </main>
 
       <Footer />
