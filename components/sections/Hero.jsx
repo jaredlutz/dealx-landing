@@ -56,13 +56,6 @@ export default function Hero({ setActive }) {
 
             <div className="mt-7 flex flex-col sm:flex-row gap-3">
               <Button href={getSignUpUrl()} onClick={() => setActive("opps")}>See Available Income Investments</Button>
-              <Button
-                variant="secondary"
-                href="#opps"
-                onClick={() => setActive("opps")}
-              >
-                See Opportunities
-              </Button>
             </div>
 
             <div className={cn("mt-6 text-sm", brand.subtle)}>

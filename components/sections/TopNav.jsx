@@ -2,10 +2,9 @@
 
 import React, { useState } from "react";
 import { Lock, Menu, X } from "lucide-react";
-import { getSignUpUrl, getSignInUrl } from "@/lib/portal";
-import { brand, cn } from "@/lib/theme";
+import { getSignInUrl } from "@/lib/portal";
+import { cn } from "@/lib/theme";
 import Container from "@/components/ui/Container";
-import Button from "@/components/ui/Button";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
 const nav = [
@@ -44,7 +43,7 @@ export default function TopNav({ active, setActive }) {
               onClick={() => setActive(n.id)}
               className={cn(
                 "rounded-md px-2.5 py-1.5 text-sm transition focus:outline-none focus:ring-1 focus:ring-diversy-primary/40",
-                active === n.id ? "bg-diversy-primary/15 text-gray-900 dark:text-white font-medium" : "text-gray-600 hover:bg-gray-100/80 hover:text-gray-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white"
+                active === n.id ? "bg-diversy-primary/15 text-gray-900 dark:text-white font-medium" : "text-gray-600 hover:bg-gray-100/80 hover:text-gray-900 dark:text-white/90 dark:hover:bg-white/5 dark:hover:text-white"
               )}
             >
               {n.label}
@@ -56,19 +55,16 @@ export default function TopNav({ active, setActive }) {
           <ThemeSwitcher />
           <a
             href={getSignInUrl()}
-            className="hidden sm:inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-transparent px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-white/20 dark:text-white/80 dark:hover:bg-white/5 transition"
+            className="hidden sm:inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-transparent px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-white/30 dark:text-white dark:hover:bg-white/5 transition"
           >
             <Lock className="h-4 w-4" />
             Log In
           </a>
-           <span className="hidden sm:inline-flex">
-            <Button href={getSignUpUrl()} onClick={() => setActive("opps")}>See Opportunities</Button>
-          </span>
 
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40"
+            className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white/90 dark:hover:bg-white/5 dark:hover:text-white transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40"
             aria-expanded={mobileOpen}
             aria-label="Toggle menu"
           >
@@ -88,7 +84,7 @@ export default function TopNav({ active, setActive }) {
                   onClick={() => { setActive(n.id); setMobileOpen(false); }}
                   className={cn(
                     "rounded-lg px-4 py-3 text-sm transition",
-                    active === n.id ? "bg-diversy-primary/20 text-gray-900 dark:text-white" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white"
+                    active === n.id ? "bg-diversy-primary/20 text-gray-900 dark:text-white" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white/90 dark:hover:bg-white/5 dark:hover:text-white"
                   )}
                 >
                   {n.label}
@@ -96,16 +92,10 @@ export default function TopNav({ active, setActive }) {
               ))}
               <a
                 href={getSignInUrl()}
-                className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white transition"
+                className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-white/5 transition"
               >
                 <Lock className="h-4 w-4" />
                 Log In
-              </a>
-              <a
-                href={getSignUpUrl()}
-                className="flex items-center justify-center gap-2 rounded-xl bg-diversy-primary px-4 py-3 text-sm font-semibold text-white hover:bg-diversy-primary-hover transition mx-4 mt-2"
-              >
-                See Opportunities
               </a>
             </div>
           </Container>
