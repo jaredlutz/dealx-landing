@@ -9,15 +9,23 @@
 - Prefer internal links over external diversyfund.com URLs when we have the page
 - Keep top nav minimal; avoid crowding with many menu items; no Portal login block in footer
 - Mariposa approach for site migration: URL mapping, content migration, image crawl, seed scripts
+- Default imagery work to one new or updated asset and one section per pass unless the user explicitly widens scope (e.g. hero-only means no other sections)
+- Prefer scoped landing-section changes; broad restyles that edit shared UI primitives (Button, Card, SectionTitle, Badge) ripple across admin and other routes and have been reverted—confirm before repeating that pattern
+- Do not reintroduce removed hero experiments (chat UI, scroll-docked sidebar) without an explicit ongoing product request
+- Public landing should feel institutional and understated (serious private-markets, high-trust) rather than retail fintech, consumer growth funnels, or flashy marketing-page tropes
+- Contact and support left columns should follow the same InstitutionalFormPage pattern (eyebrow, primary routing callout, icon highlights) and stay scannable; if CMS pastes extra copy into `contact` body, intro rendering truncates after the intended closing sentence—still clean the block in admin
 
 ## Learned Workspace Facts
 
-- Fixed-Note-LP uses bun, Next.js 14, Neon Postgres, Drizzle ORM
+- This repo (Fixed-Note-LP) uses bun, Next.js 14, Neon Postgres, Drizzle ORM
 - WorkOS AuthKit protects admin; middleware must skip auth for public routes to avoid "Empty password" when env vars are unset
 - Portal CTAs use NEXT_PUBLIC_PORTAL_URL and lib/portal.js (getSignUpUrl, getSignInUrl)
 - DiversyFund branding: primary #005EE0, dark bg #0A0B0D, light/dark theme via next-themes
-- Content in content_blocks; testimonials in testimonials table
-- Migrated images: public/migrated/home and public/migrated/content/{pageId}
-- migrate-urls.ts, crawl-home-images.ts, crawl-all-pages.ts, migrate-content-from-live.ts
-- DATABASE_URL required for DB; WorkOS vars required only when using /admin
-- Main page (V1 institutional): Hero, Structures, WhyDiversyFund, Opportunities; TopNav minimal (Home, Opportunities); /homepage-old has V2 design; /v2 merges home + v3; /v3 is portal-login focused
+- Content in content_blocks; testimonials in testimonials table; legal pages use lib/legal/*.fragment.html with `bun run legal:sync`
+- Migrated images: public/migrated/home and public/migrated/content/{pageId}; migrate-urls.ts, crawl-home-images.ts, crawl-all-pages.ts, migrate-content-from-live.ts
+- DATABASE_URL required for DB; WorkOS vars only for /admin; Vercel/production installs from committed package.json—declare all admin/DB dependencies there
+- Subtle global grain: `.df-page-grain` in app/layout.jsx and globals.css; section rhythm uses semantic tokens via lib/theme.js and globals CSS variables
+- Main `/`: LandingPage sections Hero → Structures → Opportunities → Positioning → Testimonials; Allocation Profile at top of Structures; Hero two-column with HeroStatsBento on the right; TopNav is Home and Opportunities—use `/#home` and `/#opps` from pages outside `/`
+- Public `/contact`, `/support`, `/documents` (lib/site-documents.js + public/documents/), `/privacy-policy`, `/sms-terms`; MainSiteChrome; Footer has social links, Company links (Documents, Privacy, SMS terms), and Support links (Contact, Investor support, investorsupport mailto)
+- Public marketing metadata: SITE_NAME is DiversyFund; default description/tagline in lib/site-seo.js; set NEXT_PUBLIC_APP_URL for metadataBase, sitemap, robots, and JSON-LD; default social image is public/images/og-diversyfund-share.png (`bun run og:share` to regenerate)
+- `/api/contact` forwards to df-crm public contact ingest (upserts contacts); `/api/support` forwards to diversyfund-portal public support ingest (Resend email, not portal DB); Bearer secrets must match each target app; df-middleware handles HMAC-signed portal↔CRM sync and is not the path for these marketing forms unless new event contracts are added

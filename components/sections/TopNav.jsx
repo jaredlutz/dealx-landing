@@ -16,10 +16,10 @@ export default function TopNav({ active, setActive }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur dark:border-white/10 dark:bg-diversy-dark/95">
+    <div className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <Container className="flex items-center justify-between py-3">
         <a
-          href="#home"
+          href="/"
           onClick={() => { setActive("home"); setMobileOpen(false); }}
           className="flex items-center gap-3"
         >
@@ -39,11 +39,11 @@ export default function TopNav({ active, setActive }) {
           {nav.map((n) => (
             <a
               key={n.id}
-              href={`#${n.id}`}
+              href={`/#${n.id}`}
               onClick={() => setActive(n.id)}
               className={cn(
                 "rounded-md px-2.5 py-1.5 text-sm transition focus:outline-none focus:ring-1 focus:ring-diversy-primary/40",
-                active === n.id ? "bg-diversy-primary/15 text-gray-900 dark:text-white font-medium" : "text-gray-600 hover:bg-gray-100/80 hover:text-gray-900 dark:text-white/90 dark:hover:bg-white/5 dark:hover:text-white"
+                active === n.id ? "bg-diversy-primary/15 font-medium text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               {n.label}
@@ -55,7 +55,7 @@ export default function TopNav({ active, setActive }) {
           <ThemeSwitcher />
           <a
             href={getSignInUrl()}
-            className="hidden sm:inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-transparent px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-white/30 dark:text-white dark:hover:bg-white/5 transition"
+            className="hidden sm:inline-flex items-center gap-2 rounded-lg border border-border bg-transparent px-3 py-1.5 text-sm font-medium text-foreground transition hover:bg-muted"
           >
             <Lock className="h-4 w-4" />
             Log In
@@ -64,7 +64,7 @@ export default function TopNav({ active, setActive }) {
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white/90 dark:hover:bg-white/5 dark:hover:text-white transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40"
+            className="rounded-lg p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-diversy-primary/40 lg:hidden"
             aria-expanded={mobileOpen}
             aria-label="Toggle menu"
           >
@@ -74,17 +74,17 @@ export default function TopNav({ active, setActive }) {
       </Container>
 
       {mobileOpen && (
-        <div className="lg:hidden border-t border-gray-200 bg-white dark:border-white/10 dark:bg-diversy-dark">
+        <div className="border-t border-border bg-background lg:hidden">
           <Container className="py-4">
             <div className="flex flex-col gap-1">
               {nav.map((n) => (
                 <a
                   key={n.id}
-                  href={`#${n.id}`}
+                  href={`/#${n.id}`}
                   onClick={() => { setActive(n.id); setMobileOpen(false); }}
                   className={cn(
                     "rounded-lg px-4 py-3 text-sm transition",
-                    active === n.id ? "bg-diversy-primary/20 text-gray-900 dark:text-white" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white/90 dark:hover:bg-white/5 dark:hover:text-white"
+                    active === n.id ? "bg-diversy-primary/20 text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
                   {n.label}
@@ -92,7 +92,7 @@ export default function TopNav({ active, setActive }) {
               ))}
               <a
                 href={getSignInUrl()}
-                className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-white/5 transition"
+                className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
               >
                 <Lock className="h-4 w-4" />
                 Log In

@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { authkit, handleAuthkitHeaders } from "@workos-inc/authkit-nextjs";
 
+// Public form submissions use Next.js API routes (/api/support, /api/contact), which forward server-side
+// to portal / CRM URLs from env. No browser CORS and no secrets in the client.
+
 export default async function middleware(request) {
   const pathname = request.nextUrl.pathname;
   const isAdminPath =

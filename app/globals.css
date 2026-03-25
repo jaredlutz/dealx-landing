@@ -4,15 +4,70 @@
 @tailwind components;
 @tailwind utilities;
 
-/* DiversyFund brand – light/dark theme */
+/* Semantic surfaces — light / dark (class on html via next-themes) */
 @layer base {
+  :root {
+    --df-background: #f9fafb;
+    --df-foreground: #111827;
+    --df-muted: #f3f4f6;
+    --df-muted-foreground: #4b5563;
+    --df-card: #ffffff;
+    --df-card-foreground: #111827;
+    --df-border: #e5e7eb;
+  }
+
+  .dark {
+    --df-background: #0a0b0d;
+    --df-foreground: #fafafa;
+    --df-muted: #0e1014;
+    --df-muted-foreground: #a3a3a3;
+    --df-card: #13161e;
+    --df-card-foreground: #fafafa;
+    --df-border: rgba(255, 255, 255, 0.1);
+  }
+
   html {
-    @apply antialiased;
+    @apply antialiased bg-background text-foreground;
   }
+
   body {
-    @apply bg-gray-50 text-gray-900 dark:bg-[#0A0B0D] dark:text-white;
+    @apply bg-background text-foreground;
   }
+
   a {
-    @apply outline-none focus-visible:ring-2 focus-visible:ring-diversy-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-[#0A0B0D];
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-diversy-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+}
+
+/* Subtle film grain — sits above page bg, below content (sibling order + z-index) */
+@layer components {
+  .df-page-grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 30;
+    opacity: 0.038;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    mix-blend-mode: multiply;
+  }
+
+  html.dark .df-page-grain {
+    opacity: 0.055;
+    mix-blend-mode: overlay;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .df-page-grain {
+      opacity: 0.02;
+    }
+    html.dark .df-page-grain {
+      opacity: 0.03;
+    }
+  }
+
+  .investment-interest-dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.5);
   }
 }

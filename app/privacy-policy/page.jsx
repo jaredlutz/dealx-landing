@@ -1,17 +1,15 @@
-import { getContentBlock } from "@/lib/content";
-import SiteLayout from "@/components/layout/SiteLayout";
-import ContentPage from "@/components/sections/ContentPage";
+import LegalDocumentPage from "@/components/legal/LegalDocumentPage";
+import { loadLegalFragment } from "@/lib/legal/loadLegalFragment";
+import { publicPageMetadata } from "@/lib/site-seo";
 
-export const dynamic = "force-dynamic";
+export const metadata = publicPageMetadata({
+  title: "Privacy Policy",
+  description:
+    "How DiversyFund collects, uses, and protects personal information for visitors and investors on this website.",
+  path: "/privacy-policy",
+});
 
-export default async function PrivacyPolicyPage() {
-  const title = (await getContentBlock("privacy_policy", "title")) ?? "Privacy Policy";
-  const body = (await getContentBlock("privacy_policy", "body")) ?? "";
-  const primaryImage = "/migrated/content/privacy_policy/img-0.jpg";
-
-  return (
-    <SiteLayout>
-      <ContentPage title={title} body={body} primaryImage={primaryImage} />
-    </SiteLayout>
-  );
+export default function PrivacyPolicyPage() {
+  const html = loadLegalFragment("privacy");
+  return <LegalDocumentPage title="Privacy Policy" html={html} />;
 }

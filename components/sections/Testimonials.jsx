@@ -33,7 +33,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="pt-20">
+    <section className={cn("relative bg-background pt-20 pb-8 sm:pb-12", brand.sectionRule)}>
       <Container>
         <SectionTitle
           eyebrow="Testimonials"

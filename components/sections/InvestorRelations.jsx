@@ -1,9 +1,8 @@
 import { CheckCircle2, Lock, Mail } from "lucide-react";
-import { getSignUpUrl } from "@/lib/portal";
+import InvestCtaButton from "@/components/investment/InvestCtaButton";
 import { brand, cn } from "@/lib/theme";
 import Container from "@/components/ui/Container";
 import SectionTitle from "@/components/ui/SectionTitle";
-import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 
 export default function InvestorRelations() {
@@ -64,13 +63,13 @@ export default function InvestorRelations() {
           </div>
 
           <div className="lg:col-span-5">
-            <div className={cn("rounded-3xl border p-6", brand.border, "bg-gradient-to-b from-gray-100 to-gray-50 dark:from-white/10 dark:to-white/5")}>
+            <div className={cn("rounded-3xl border border-border bg-card p-6 text-card-foreground")}>
               <div className={cn("font-semibold text-lg", brand.text)}>Get started</div>
               <p className={cn("mt-2 text-sm leading-relaxed", brand.muted)}>
                 Create an account and complete eligibility review to access full offering documentation, onboarding, and platform access.
               </p>
               <div className="mt-6">
-                <Button href={getSignUpUrl()}>Start Eligibility Review</Button>
+                <InvestCtaButton source="investor-relations">Start Eligibility Review</InvestCtaButton>
               </div>
             </div>
           </div>

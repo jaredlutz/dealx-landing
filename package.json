@@ -17,7 +17,9 @@
     "db:seed": "bun run scripts/seed.js",
     "db:seed:about": "bun run scripts/seed-about.ts",
     "db:seed:multifamily": "bun run scripts/seed-multifamily-fund.ts",
-    "db:seed:ira": "bun run scripts/seed-invest-ira.ts"
+    "db:seed:ira": "bun run scripts/seed-invest-ira.ts",
+    "legal:sync": "bun run scripts/sync-legal-from-live.mjs",
+    "og:share": "bun run scripts/generate-og-share.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.0",
@@ -38,6 +40,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.35",
     "postcss": "^8.4.49",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.15"
   }
 }

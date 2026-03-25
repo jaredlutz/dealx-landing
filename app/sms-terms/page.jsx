@@ -1,17 +1,17 @@
-import { getContentBlock } from "@/lib/content";
-import SiteLayout from "@/components/layout/SiteLayout";
-import ContentPage from "@/components/sections/ContentPage";
+import LegalDocumentPage from "@/components/legal/LegalDocumentPage";
+import { loadLegalFragment } from "@/lib/legal/loadLegalFragment";
+import { publicPageMetadata } from "@/lib/site-seo";
 
-export const dynamic = "force-dynamic";
+export const metadata = publicPageMetadata({
+  title: "SMS terms",
+  description:
+    "Terms and conditions for SMS communications from DiversyFund, including consent, frequency, and opt-out instructions.",
+  path: "/sms-terms",
+});
 
-export default async function SmsTermsPage() {
-  const title = (await getContentBlock("sms_terms", "title")) ?? "SMS Terms";
-  const body = (await getContentBlock("sms_terms", "body")) ?? "";
-  const primaryImage = "/migrated/content/sms_terms/img-0.jpg";
-
+export default function SmsTermsPage() {
+  const html = loadLegalFragment("sms");
   return (
-    <SiteLayout>
-      <ContentPage title={title} body={body} primaryImage={primaryImage} />
-    </SiteLayout>
+    <LegalDocumentPage title="SMS Terms & Conditions" html={html} />
   );
 }
