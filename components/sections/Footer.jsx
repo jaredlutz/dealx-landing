@@ -80,6 +80,12 @@ export default function Footer() {
               <a href="/documents" className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}>
                 Documents
               </a>
+              <a href="/offering-circular" className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}>
+                Offering circular
+              </a>
+              <a href="/terms-of-service" className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}>
+                Terms of Service
+              </a>
               <a href="/privacy-policy" className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}>
                 Privacy
               </a>

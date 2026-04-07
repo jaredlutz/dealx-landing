@@ -1,19 +1,18 @@
 import { Download, ExternalLink, FileText } from "lucide-react";
-import Link from "next/link";
 import MainSiteChrome from "@/components/layout/MainSiteChrome";
 import Container from "@/components/ui/Container";
-import { siteDocuments } from "@/lib/site-documents";
+import { offeringCircularDocuments } from "@/lib/offering-circular-docs";
 import { publicPageMetadata } from "@/lib/site-seo";
 import { brand, cn } from "@/lib/theme";
 
 export const metadata = publicPageMetadata({
-  title: "Documents",
+  title: "Offering circular",
   description:
-    "View and download DiversyFund offering documents, disclosures, and legal materials referenced on this site.",
-  path: "/documents",
+    "Download DF Growth REIT and DF Growth REIT II offering circulars with supplements and amendments (PDF).",
+  path: "/offering-circular",
 });
 
-export default function DocumentsPage() {
+export default function OfferingCircularPage() {
   return (
     <MainSiteChrome>
       <Container className="pb-10 pt-8 sm:pb-14 sm:pt-12">
@@ -23,19 +22,26 @@ export default function DocumentsPage() {
             brand.text
           )}
         >
-          Documents
+          Offering circular
         </h1>
         <p className={cn("mt-3 max-w-2xl text-sm sm:text-base", brand.muted)}>
-          View or download the documents below. Files open in a new tab; use
-          Download to save a copy to your device. REIT offering circulars are
-          on the{" "}
-          <Link
-            href="/offering-circular"
+          Offering circulars for DF Growth REIT and DF Growth REIT II. Files
+          open in a new tab; use Download to save a copy. These materials
+          supplement the{" "}
+          <a
+            href="/terms-of-service"
             className="text-diversy-primary underline underline-offset-2 hover:opacity-90"
           >
-            Offering circular
-          </Link>{" "}
-          page.
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a
+            href="/privacy-policy"
+            className="text-diversy-primary underline underline-offset-2 hover:opacity-90"
+          >
+            Privacy Policy
+          </a>
+          .
         </p>
 
         <ul
@@ -44,12 +50,12 @@ export default function DocumentsPage() {
             "[&>li+li]:border-t [&>li+li]:border-border"
           )}
         >
-          {siteDocuments.map((doc) => (
+          {offeringCircularDocuments.map((doc) => (
             <li
               key={doc.id}
               className="flex flex-col gap-4 py-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8"
             >
-              <div className="flex gap-3 min-w-0">
+              <div className="flex min-w-0 gap-3">
                 <FileText
                   className={cn(
                     "mt-0.5 h-5 w-5 shrink-0 text-diversy-primary"

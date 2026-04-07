@@ -19,6 +19,12 @@ export default function FooterDiversy() {
               <Link href="/support" className="mt-1 block transition hover:text-diversy-primary">
                 Support
               </Link>
+              <Link href="/offering-circular" className="mt-1 block transition hover:text-diversy-primary">
+                Offering circular
+              </Link>
+              <Link href="/terms-of-service" className="mt-1 block transition hover:text-diversy-primary">
+                Terms of Service
+              </Link>
               <Link href="/privacy-policy" className="mt-1 block transition hover:text-diversy-primary">
                 Privacy Policy
               </Link>

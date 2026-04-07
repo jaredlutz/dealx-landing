@@ -8,6 +8,9 @@ export default function sitemap() {
     { path: "/contact", changeFrequency: "monthly", priority: 0.85 },
     { path: "/support", changeFrequency: "monthly", priority: 0.85 },
     { path: "/documents", changeFrequency: "monthly", priority: 0.75 },
+    { path: "/premier-program", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/offering-circular", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/terms-of-service", changeFrequency: "yearly", priority: 0.5 },
     { path: "/privacy-policy", changeFrequency: "yearly", priority: 0.5 },
     { path: "/sms-terms", changeFrequency: "yearly", priority: 0.5 },
   ];

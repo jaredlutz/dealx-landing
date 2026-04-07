@@ -23,6 +23,11 @@ bun install
    - `WORKOS_API_KEY`, `WORKOS_CLIENT_ID` — from [WorkOS Dashboard](https://dashboard.workos.com/)
    - `WORKOS_COOKIE_PASSWORD` — min 32 chars (`openssl rand -base64 32`)
    - `NEXT_PUBLIC_WORKOS_REDIRECT_URI` — `http://localhost:3000/callback`
+   - **Public forms (production / staging):** see `.env.example`. In particular:
+     - **`INVESTMENT_INTEREST_WEBHOOK_URL`** (and optional **`INVESTMENT_INTEREST_WEBHOOK_SECRET`**) — where **Investment interest** modal submissions (`/api/investment-interest`) are POSTed. If unset, the API still returns success but leads are **only logged** on the server, not stored or forwarded.
+     - **`CRM_CONTACT_FORM_URL`** / **`CRM_CONTACT_FORM_SECRET`** — `/contact` → df-crm ingest
+     - **`PORTAL_SUPPORT_FORM_URL`** / **`PORTAL_SUPPORT_FORM_SECRET`** — `/support` → portal ingest
+   - **`NEXT_PUBLIC_APP_URL`**, **`NEXT_PUBLIC_PORTAL_URL`** — SEO/canonical URLs and portal CTAs
 
 2. Push database schema:
 
