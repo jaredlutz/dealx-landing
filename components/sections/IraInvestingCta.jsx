@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, Download, FileText } from "lucide-react";
 import InvestCtaButton from "@/components/investment/InvestCtaButton";
@@ -99,13 +100,13 @@ export default function IraInvestingCta() {
           <div className="lg:col-span-5">
             <div
               className={cn(
-                "relative mx-auto flex aspect-[3/4] w-full max-w-xs flex-col justify-between overflow-hidden rounded-2xl border border-border bg-background p-6 shadow-md sm:max-w-sm",
+                "relative mx-auto flex aspect-[3/4] w-full max-w-xs flex-col overflow-hidden rounded-2xl border border-border bg-background p-6 shadow-md sm:max-w-sm",
                 "before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_120%_70%_at_20%_-10%,rgba(0,94,224,0.12),transparent_60%)]",
                 "dark:before:bg-[radial-gradient(ellipse_120%_70%_at_20%_-10%,rgba(0,94,224,0.24),transparent_60%)]"
               )}
               aria-hidden
             >
-              <div className="relative">
+              <div className="relative shrink-0">
                 <div className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-diversy-primary">
                   <FileText className="h-3 w-3" />
                   PDF Guide
@@ -120,11 +121,26 @@ export default function IraInvestingCta() {
                   Custodial mechanics, eligibility, and the funding path explained.
                 </p>
               </div>
-              <div className="relative space-y-1.5">
-                <div className="h-1 w-3/4 rounded-full bg-border" />
-                <div className="h-1 w-5/6 rounded-full bg-border/70" />
-                <div className="h-1 w-2/3 rounded-full bg-border/60" />
-                <div className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-medium text-diversy-primary">
+              <div className="relative flex min-h-0 flex-1 flex-col justify-center py-4">
+                <div className="flex items-center justify-center">
+                  <Image
+                    src="/images/diversyfund-mark.svg"
+                    alt=""
+                    width={21}
+                    height={26}
+                    className="h-24 w-auto opacity-95 drop-shadow-sm dark:hidden sm:h-[7.5rem]"
+                  />
+                  <Image
+                    src="/images/diversyfund-mark-white.svg"
+                    alt=""
+                    width={21}
+                    height={26}
+                    className="hidden h-24 w-auto opacity-95 drop-shadow-sm dark:block sm:h-[7.5rem]"
+                  />
+                </div>
+              </div>
+              <div className="relative mt-auto shrink-0 border-t border-border pt-4">
+                <div className="inline-flex items-center gap-1.5 text-[10px] font-medium text-diversy-primary">
                   <Download className="h-3 w-3" />
                   Free download
                 </div>

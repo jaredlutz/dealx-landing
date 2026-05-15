@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    // Browsers default to /favicon.ico; serve the same mark as `app/icon.svg`.
+    return [{ source: "/favicon.ico", destination: "/icon.svg" }];
+  },
   async redirects() {
     return [
       { source: "/blog", destination: "/insights-education", permanent: true },
