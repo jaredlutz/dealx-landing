@@ -1,6 +1,6 @@
 import { Download, ExternalLink, FileText } from "lucide-react";
 import Link from "next/link";
-import MainSiteChrome from "@/components/layout/MainSiteChrome";
+import MarketingShell from "@/components/layout/MarketingShell";
 import Container from "@/components/ui/Container";
 import { siteDocuments } from "@/lib/site-documents";
 import { publicPageMetadata } from "@/lib/site-seo";
@@ -15,7 +15,7 @@ export const metadata = publicPageMetadata({
 
 export default function DocumentsPage() {
   return (
-    <MainSiteChrome>
+    <MarketingShell>
       <Container className="pb-10 pt-8 sm:pb-14 sm:pt-12">
         <h1
           className={cn(
@@ -92,6 +92,6 @@ export default function DocumentsPage() {
           ))}
         </ul>
       </Container>
-    </MainSiteChrome>
+    </MarketingShell>
   );
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Clock, Mail, MapPin } from "lucide-react";
-import MainSiteChrome from "@/components/layout/MainSiteChrome";
+import MarketingShell from "@/components/layout/MarketingShell";
 import InstitutionalFormPage from "@/components/layout/InstitutionalFormPage";
 import ContactFormClient from "@/components/sections/contact/ContactFormClient";
 import { getContentBlock } from "@/lib/content";
@@ -66,7 +66,7 @@ export default async function ContactPage() {
   );
 
   return (
-    <MainSiteChrome>
+    <MarketingShell>
       <InstitutionalFormPage
         leadColumnClass="lg:col-span-7"
         formColumnClass="lg:col-span-5"
@@ -110,7 +110,7 @@ export default async function ContactPage() {
         lead={
           <div
             className={cn(
-              "mt-8 rounded-xl border border-diversy-primary/25 bg-diversy-primary/[0.04] p-4 backdrop-blur-sm",
+              "mt-8 rounded-xl border border-diversy-primary/25 bg-diversy-primary/[0.04] p-4 lg:backdrop-blur-sm",
               "dark:border-diversy-primary/35 dark:bg-diversy-primary/[0.08]"
             )}
           >
@@ -126,6 +126,6 @@ export default async function ContactPage() {
         }
         form={<ContactFormClient />}
       />
-    </MainSiteChrome>
+    </MarketingShell>
   );
 }

@@ -69,7 +69,7 @@ export default function InvestorRelations() {
                 Create an account and complete eligibility review to access full offering documentation, onboarding, and platform access.
               </p>
               <div className="mt-6">
-                <InvestCtaButton source="investor-relations">Start Eligibility Review</InvestCtaButton>
+                <InvestCtaButton source="investor-relations">Book Appointment</InvestCtaButton>
               </div>
             </div>
           </div>

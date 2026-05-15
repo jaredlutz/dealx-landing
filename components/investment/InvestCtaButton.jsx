@@ -16,6 +16,10 @@ const variants = {
 
 /**
  * Opens the investment-interest modal (same flow as portal campaign form, with contact fields on the marketing site).
+ *
+ * Pass `successAction` to switch the modal into a lead-magnet flow — e.g. the
+ * IRA Investing Guide CTA on the home page uses `{ kind: "download", href, ... }`
+ * so the success state auto-downloads the PDF instead of routing to the portal.
  */
 export default function InvestCtaButton({
   source,
@@ -24,6 +28,7 @@ export default function InvestCtaButton({
   variant = "primary",
   showArrow = true,
   onBeforeOpen,
+  successAction = null,
   type = "button",
   ...rest
 }) {
@@ -35,7 +40,7 @@ export default function InvestCtaButton({
       className={cn(base, variants[variant] ?? variants.primary, className)}
       onClick={() => {
         onBeforeOpen?.();
-        openModal(source);
+        openModal(source, successAction ? { successAction } : undefined);
       }}
       {...rest}
     >

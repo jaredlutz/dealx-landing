@@ -1,56 +1,37 @@
 "use client";
 
-import React, { useEffect, useId, useRef, useState } from "react";
-import { X } from "lucide-react";
-import { getSignUpUrl } from "@/lib/portal";
-import { SMS_CONSENT_MARKETING, SMS_CONSENT_TRANSACTIONAL } from "@/lib/investment-interest-consent";
-import { publicInputClass, publicLabelClass } from "@/lib/public-form-styles";
-import { brand, cn } from "@/lib/theme";
+import { useEffect, useId, useRef, useState } from "react";
+import { Download, X } from "lucide-react";
+import LeadSignupForm from "@/components/investment/LeadSignupForm";
 import Button from "@/components/ui/Button";
+import { getSignUpUrl } from "@/lib/portal";
+import { brand, cn } from "@/lib/theme";
 
-const INVESTMENT_RANGES = [
-  { value: "", label: "Select range" },
-  { value: "under_100k", label: "Under $100,000" },
-  { value: "100k_250k", label: "$100,000 – $250,000" },
-  { value: "250k_1m", label: "$250,000 – $1,000,000" },
-  { value: "1m_plus", label: "$1,000,000+" },
-  { value: "prefer_not", label: "Prefer not to say" },
-];
-
-const ACCREDITED = [
-  { value: "", label: "Select one" },
-  { value: "yes", label: "Yes" },
-  { value: "no", label: "No" },
-  { value: "unsure", label: "I'm not sure" },
-];
-
-function digitsOnly(s) {
-  return String(s || "").replace(/\D/g, "");
-}
-
-const inputClass = publicInputClass;
-const labelClass = publicLabelClass;
-
-export default function InvestmentInterestModal({ open, source, onClose }) {
+/**
+ * Investment interest modal — the "Review current opportunities" / "See available
+ * income investments" / "Download the IRA Investing Guide" entry point.
+ *
+ * Hosts `LeadSignupForm` inside a `<dialog>` so every CTA across the site shares
+ * the same WorkOS-backed sign-up gate (real account creation via
+ * `userManagement.createUser` + `authenticateWithPassword` + `saveSession`, or
+ * the LinkedIn deep-link short-cut) instead of an anonymous lead form. The
+ * intent is derived from `successAction.kind`:
+ *   - `download` → `intent: "ira-download"` (minimal sign-up + auto-download)
+ *   - everything else → `intent: "income-investments"` (sign-up + investment
+ *     timeline + primary goal + optional phone with SMS consents)
+ */
+export default function InvestmentInterestModal({ open, source, successAction = null, onClose }) {
   const dialogRef = useRef(null);
+  const downloadAnchorRef = useRef(null);
   const formId = useId();
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  // Bumped each time `open` transitions to true so the inline form
+  // remounts fresh (no stale half-filled state when the visitor reopens
+  // the modal after dismissing it).
+  const [openCount, setOpenCount] = useState(0);
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [investmentRange, setInvestmentRange] = useState("");
-  const [accreditedInvestor, setAccreditedInvestor] = useState("");
-  const [comments, setComments] = useState("");
-  const [consentTransactional, setConsentTransactional] = useState(false);
-  const [consentMarketing, setConsentMarketing] = useState(false);
-  const [companyWebsite, setCompanyWebsite] = useState("");
-
-  const phoneDigits = digitsOnly(phone);
-  const showSmsConsents = phoneDigits.length >= 10;
+  const isDownloadFlow = successAction?.kind === "download";
+  const intent = isDownloadFlow ? "ira-download" : "income-investments";
 
   useEffect(() => {
     const el = dialogRef.current;
@@ -72,84 +53,28 @@ export default function InvestmentInterestModal({ open, source, onClose }) {
   useEffect(() => {
     if (!open) return;
     setSuccess(false);
-    setError("");
+    setOpenCount((n) => n + 1);
   }, [open]);
 
-  function reset() {
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setPhone("");
-    setInvestmentRange("");
-    setAccreditedInvestor("");
-    setComments("");
-    setConsentTransactional(false);
-    setConsentMarketing(false);
-    setCompanyWebsite("");
-    setError("");
-  }
-
   function handleClose() {
-    reset();
     setSuccess(false);
     onClose();
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setError("");
+  function triggerDownload(action) {
+    const a = downloadAnchorRef.current;
+    if (!a || typeof window === "undefined") return;
+    a.href = action.href;
+    a.download = action.filename || "";
+    a.rel = "noopener";
+    a.target = "_blank";
+    a.click();
+  }
 
-    if (!firstName.trim() || !lastName.trim()) {
-      setError("Please enter your first and last name.");
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-    if (!investmentRange) {
-      setError("Please select how much you are looking to invest.");
-      return;
-    }
-    if (!accreditedInvestor) {
-      setError("Please indicate accredited investor status.");
-      return;
-    }
-    if (showSmsConsents && !consentTransactional) {
-      setError("To receive text messages at the number provided, please check the transactional SMS consent box.");
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/investment-interest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          source,
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email: email.trim(),
-          phone: phone.trim() || undefined,
-          investmentRange,
-          accreditedInvestor,
-          comments: comments.trim() || undefined,
-          consentTransactionalSms: showSmsConsents ? consentTransactional : false,
-          consentMarketingSms: showSmsConsents ? consentMarketing : false,
-          companyWebsite: companyWebsite || undefined,
-        }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setError(data.message || "Something went wrong. Please try again or email investorsupport@diversyfund.com.");
-        return;
-      }
-      setSuccess(true);
-      reset();
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setSubmitting(false);
+  function handleSubmitSuccess() {
+    setSuccess(true);
+    if (isDownloadFlow && successAction?.href) {
+      triggerDownload(successAction);
     }
   }
 
@@ -157,7 +82,7 @@ export default function InvestmentInterestModal({ open, source, onClose }) {
     <dialog
       ref={dialogRef}
       className={cn(
-        "investment-interest-dialog fixed left-1/2 top-1/2 z-[100] m-0 w-[min(100vw-1.5rem,28rem)] max-w-none -translate-x-1/2 -translate-y-1/2",
+        "investment-interest-dialog fixed left-1/2 top-1/2 z-[100] m-0 w-[min(100vw-1.5rem,30rem)] max-w-none -translate-x-1/2 -translate-y-1/2",
         "border-0 bg-transparent p-0"
       )}
       onClose={handleClose}
@@ -168,17 +93,39 @@ export default function InvestmentInterestModal({ open, source, onClose }) {
       */}
       <div
         className={cn(
-          "pointer-events-auto flex max-h-[min(92dvh,40rem)] w-full flex-col overflow-hidden rounded-2xl border border-border bg-background text-foreground shadow-xl"
+          "pointer-events-auto flex max-h-[min(92dvh,44rem)] w-full flex-col overflow-hidden rounded-2xl border border-border bg-background text-foreground shadow-xl"
         )}
       >
         <div className="flex shrink-0 items-start justify-between gap-3 border-b border-border px-5 py-4">
           <div>
-            <h2 id={`${formId}-title`} className={cn("text-lg font-semibold tracking-tight", brand.text)}>
-              Investment interest
-            </h2>
-            <p className={cn("mt-1 text-xs", brand.muted)}>
-              Tell us how we can help. We&apos;ll follow up with next steps.
-            </p>
+            {isDownloadFlow ? (
+              <>
+                {successAction.eyebrow ? (
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-diversy-primary">
+                    {successAction.eyebrow}
+                  </p>
+                ) : null}
+                <h2 id={`${formId}-title`} className={cn("text-lg font-semibold tracking-tight", brand.text)}>
+                  {successAction.title || "Get the guide"}
+                </h2>
+                <p className={cn("mt-1 text-xs", brand.muted)}>
+                  {successAction.description ||
+                    "Sign up to unlock the PDF — we'll email a copy for later."}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-diversy-primary">
+                  Income investments
+                </p>
+                <h2 id={`${formId}-title`} className={cn("text-lg font-semibold tracking-tight", brand.text)}>
+                  See available income investments
+                </h2>
+                <p className={cn("mt-1 text-xs", brand.muted)}>
+                  Sign up and tell us a bit about your allocation so we can route the right next step.
+                </p>
+              </>
+            )}
           </div>
           <button
             type="button"
@@ -193,201 +140,68 @@ export default function InvestmentInterestModal({ open, source, onClose }) {
         <div
           className={cn(
             "overflow-y-auto overscroll-contain px-5 py-4",
-            "max-h-[min(calc(92dvh-9rem),calc(40rem-9rem))]",
+            "max-h-[min(calc(92dvh-9rem),calc(44rem-9rem))]",
             "[-webkit-overflow-scrolling:touch]"
           )}
         >
-        {success ? (
-          <div className="space-y-4">
-            <p className={cn("text-sm leading-relaxed", brand.muted)}>
-              Thank you. Our team will review your information and reach out shortly.
-            </p>
-            <p className={cn("text-sm leading-relaxed", brand.muted)}>
-              Continue to the investor portal to create your account and complete onboarding when you&apos;re ready.
-            </p>
-            <div className="flex flex-col gap-2 pt-2">
-              <Button href={getSignUpUrl()} showArrow>
-                Go to investor portal
-              </Button>
-              <button
-                type="button"
-                onClick={handleClose}
-                className={cn("text-center text-sm font-medium text-diversy-primary hover:underline")}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        ) : (
-          <form id={`${formId}-form`} onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              name="company"
-              value={companyWebsite}
-              onChange={(e) => setCompanyWebsite(e.target.value)}
-              className="absolute -left-[9999px] h-0 w-0 opacity-0"
-              tabIndex={-1}
-              autoComplete="off"
-              aria-hidden
+          {success ? (
+            isDownloadFlow ? (
+              <div className="space-y-4">
+                <p className={cn("text-sm leading-relaxed", brand.muted)}>
+                  Thank you. Your download should have started — if not, use the button below. We&apos;ve also flagged
+                  your interest so our team can follow up with the next step.
+                </p>
+                <div className="flex flex-col gap-2 pt-2">
+                  <Button
+                    href={successAction.href}
+                    onClick={() => triggerDownload(successAction)}
+                    showArrow={false}
+                  >
+                    <Download className="h-4 w-4" aria-hidden />
+                    Download the guide
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className={cn("text-center text-sm font-medium text-diversy-primary hover:underline")}
+                  >
+                    Close
+                  </button>
+                </div>
+                <a ref={downloadAnchorRef} className="hidden" aria-hidden tabIndex={-1} />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className={cn("text-sm leading-relaxed", brand.muted)}>
+                  Thank you. Our team will review your information and reach out shortly.
+                </p>
+                <p className={cn("text-sm leading-relaxed", brand.muted)}>
+                  Continue to the investor portal to create your account and complete onboarding when you&apos;re ready.
+                </p>
+                <div className="flex flex-col gap-2 pt-2">
+                  <Button href={getSignUpUrl()} showArrow>
+                    Go to investor portal
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className={cn("text-center text-sm font-medium text-diversy-primary hover:underline")}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )
+          ) : (
+            <LeadSignupForm
+              key={openCount}
+              intent={intent}
+              source={source || "modal"}
+              successAction={successAction}
+              onSubmitSuccess={handleSubmitSuccess}
+              onCancel={handleClose}
             />
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className={labelClass} htmlFor={`${formId}-fn`}>
-                  First name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id={`${formId}-fn`}
-                  className={inputClass}
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  autoComplete="given-name"
-                  required
-                />
-              </div>
-              <div>
-                <label className={labelClass} htmlFor={`${formId}-ln`}>
-                  Last name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id={`${formId}-ln`}
-                  className={inputClass}
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  autoComplete="family-name"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className={labelClass} htmlFor={`${formId}-em`}>
-                Email <span className="text-red-500">*</span>
-              </label>
-              <input
-                id={`${formId}-em`}
-                type="email"
-                className={inputClass}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelClass} htmlFor={`${formId}-ph`}>
-                Phone
-              </label>
-              <input
-                id={`${formId}-ph`}
-                type="tel"
-                className={inputClass}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                autoComplete="tel"
-                placeholder="Optional — required if you want SMS updates"
-              />
-              {phoneDigits.length > 0 && phoneDigits.length < 10 && (
-                <p className={cn("mt-1 text-xs", brand.subtle)}>Enter a complete phone number (10+ digits) for SMS.</p>
-              )}
-            </div>
-
-            <div>
-              <label className={labelClass} htmlFor={`${formId}-range`}>
-                How much are you looking to invest? <span className="text-red-500">*</span>
-              </label>
-              <select
-                id={`${formId}-range`}
-                className={inputClass}
-                value={investmentRange}
-                onChange={(e) => setInvestmentRange(e.target.value)}
-                required
-              >
-                {INVESTMENT_RANGES.map((o) => (
-                  <option key={o.value || "empty"} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className={labelClass} htmlFor={`${formId}-acc`}>
-                Are you an accredited investor? <span className="text-red-500">*</span>
-              </label>
-              <select
-                id={`${formId}-acc`}
-                className={inputClass}
-                value={accreditedInvestor}
-                onChange={(e) => setAccreditedInvestor(e.target.value)}
-                required
-              >
-                {ACCREDITED.map((o) => (
-                  <option key={o.value || "empty"} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className={labelClass} htmlFor={`${formId}-msg`}>
-                Anything else we should know?
-              </label>
-              <textarea
-                id={`${formId}-msg`}
-                className={cn(inputClass, "min-h-[5rem] resize-y")}
-                value={comments}
-                onChange={(e) => setComments(e.target.value)}
-                rows={3}
-              />
-            </div>
-
-            {showSmsConsents && (
-              <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-3">
-                <p className={cn("text-xs font-medium", brand.text)}>SMS consent</p>
-                <label className="flex cursor-pointer gap-2.5">
-                  <input
-                    type="checkbox"
-                    checked={consentTransactional}
-                    onChange={(e) => setConsentTransactional(e.target.checked)}
-                    className="mt-1 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
-                  />
-                  <span className={cn("text-xs leading-snug", brand.muted)}>{SMS_CONSENT_TRANSACTIONAL}</span>
-                </label>
-                <label className="flex cursor-pointer gap-2.5">
-                  <input
-                    type="checkbox"
-                    checked={consentMarketing}
-                    onChange={(e) => setConsentMarketing(e.target.checked)}
-                    className="mt-1 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
-                  />
-                  <span className={cn("text-xs leading-snug", brand.muted)}>{SMS_CONSENT_MARKETING}</span>
-                </label>
-              </div>
-            )}
-
-            {error && (
-              <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400" role="alert">
-                {error}
-              </p>
-            )}
-
-            <div className="flex flex-col gap-2 border-t border-border pt-4">
-              <Button type="submit" showArrow={false} disabled={submitting}>
-                {submitting ? "Submitting…" : "Submit"}
-              </Button>
-              <button
-                type="button"
-                onClick={handleClose}
-                className={cn("py-2 text-center text-sm font-medium text-muted-foreground hover:text-foreground")}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
+          )}
         </div>
       </div>
     </dialog>

@@ -2,25 +2,33 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Lock, Menu, X } from "lucide-react";
 import { getSignInUrl } from "@/lib/portal";
 import InvestCtaButton from "@/components/investment/InvestCtaButton";
 import { brand, cn } from "@/lib/theme";
 import Container from "@/components/ui/Container";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+import {
+  InsightsEducationMegaMenuDesktop,
+  InsightsEducationMegaMenuMobile,
+} from "@/components/navigation/InsightsEducationMegaMenu";
 
 const nav = [
   { id: "home", label: "Home", href: "/" },
   { id: "opps", label: "Opportunities", href: "/#opps" },
+  { id: "insights", label: "Insights & Education", href: "/insights-education" },
   { id: "support", label: "Support", href: "/support" },
   { id: "contact", label: "Contact", href: "/contact" },
 ];
 
 export default function TopNavDiversy({ active, setActive }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const navActive = pathname?.startsWith("/insights-education") ? "insights" : active;
 
   return (
-    <div className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <div className="sticky top-0 z-40 border-b border-border bg-background lg:bg-background/95 lg:backdrop-blur supports-[backdrop-filter]:lg:bg-background/80">
       <Container className="flex items-center justify-between py-3">
         <Link
           href="/"
@@ -43,19 +51,29 @@ export default function TopNavDiversy({ active, setActive }) {
         </Link>
 
         <div className="hidden md:flex items-center gap-1">
-          {nav.map((n) => (
-            <Link
-              key={n.id}
-              href={n.href}
-              onClick={() => { setActive?.(n.id); setMobileOpen(false); }}
-              className={cn(
-                "rounded-lg px-3 py-2 text-sm transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40 focus-visible:ring-2 focus-visible:ring-diversy-primary/50",
-                active === n.id ? "bg-diversy-primary/20 text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              {n.label}
-            </Link>
-          ))}
+          {nav.map((n) =>
+            n.id === "insights" ? (
+              <InsightsEducationMegaMenuDesktop
+                key={n.id}
+                isActive={navActive === "insights"}
+                onActivate={() => { setActive?.("insights"); setMobileOpen(false); }}
+                activeTriggerClassName="bg-diversy-primary/20 text-foreground"
+                triggerClassName="rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-diversy-primary/40 focus-visible:ring-2 focus-visible:ring-diversy-primary/50"
+              />
+            ) : (
+              <Link
+                key={n.id}
+                href={n.href}
+                onClick={() => { setActive?.(n.id); setMobileOpen(false); }}
+                className={cn(
+                  "rounded-lg px-3 py-2 text-sm transition focus:outline-none focus:ring-2 focus:ring-diversy-primary/40 focus-visible:ring-2 focus-visible:ring-diversy-primary/50",
+                  navActive === n.id ? "bg-diversy-primary/20 text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                {n.label}
+              </Link>
+            )
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -89,19 +107,37 @@ export default function TopNavDiversy({ active, setActive }) {
         <div className="border-t border-border bg-background md:hidden">
           <Container className="py-4">
             <div className="flex flex-col gap-1">
-              {nav.map((n) => (
-                <Link
-                  key={n.id}
-                  href={n.href}
-                  onClick={() => { setActive?.(n.id); setMobileOpen(false); }}
-                  className={cn(
-                    "rounded-lg px-4 py-3 text-sm transition",
-                    active === n.id ? "bg-diversy-primary/20 text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
-                >
-                  {n.label}
-                </Link>
-              ))}
+              {nav.map((n) =>
+                n.id === "insights" ? (
+                  <div key={n.id} className="rounded-lg px-2 py-1">
+                    <Link
+                      href={n.href}
+                      onClick={() => { setActive?.(n.id); setMobileOpen(false); }}
+                      className={cn(
+                        "block rounded-lg px-2 py-2 text-sm transition",
+                        navActive === n.id
+                          ? "bg-diversy-primary/20 text-foreground"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      )}
+                    >
+                      {n.label}
+                    </Link>
+                    <InsightsEducationMegaMenuMobile onPick={() => setMobileOpen(false)} className="ml-2" />
+                  </div>
+                ) : (
+                  <Link
+                    key={n.id}
+                    href={n.href}
+                    onClick={() => { setActive?.(n.id); setMobileOpen(false); }}
+                    className={cn(
+                      "rounded-lg px-4 py-3 text-sm transition",
+                      navActive === n.id ? "bg-diversy-primary/20 text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                    {n.label}
+                  </Link>
+                )
+              )}
               <a
                 href={getSignInUrl()}
                 className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"

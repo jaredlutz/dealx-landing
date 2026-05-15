@@ -22,7 +22,7 @@ export default function Hero({ setActive }) {
         <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-7">
             <div className={cn("mb-4 text-sm", brand.subtle)}>
-              Institutional discipline • $300M+ real estate acquired • Operating since 2014
+              Institutional discipline • $300M+ real estate acquired • Operating since 2016
             </div>
 
             <Badge>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Clock, Headphones, Shield } from "lucide-react";
-import MainSiteChrome from "@/components/layout/MainSiteChrome";
+import MarketingShell from "@/components/layout/MarketingShell";
 import InstitutionalFormPage from "@/components/layout/InstitutionalFormPage";
 import SupportFormClient from "@/components/sections/support/SupportFormClient";
 import { getContentBlocksForPage } from "@/lib/content";
@@ -32,7 +32,7 @@ export default async function SupportPage() {
   const body = blocks.body ?? SUPPORT_BODY_FALLBACK;
 
   return (
-    <MainSiteChrome>
+    <MarketingShell>
       <InstitutionalFormPage
         eyebrow={
           <p className={cn("text-xs font-medium uppercase tracking-[0.18em]", brand.muted)}>{eyebrow}</p>
@@ -61,7 +61,7 @@ export default async function SupportPage() {
         lead={
           <div
             className={cn(
-              "mt-8 rounded-xl border border-diversy-primary/25 bg-diversy-primary/[0.04] p-4 backdrop-blur-sm",
+              "mt-8 rounded-xl border border-diversy-primary/25 bg-diversy-primary/[0.04] p-4 lg:backdrop-blur-sm",
               "dark:border-diversy-primary/35 dark:bg-diversy-primary/[0.08]"
             )}
           >
@@ -77,6 +77,6 @@ export default async function SupportPage() {
         }
         form={<SupportFormClient />}
       />
-    </MainSiteChrome>
+    </MarketingShell>
   );
 }

@@ -41,6 +41,7 @@ function isSkipPath(path: string): boolean {
     path.includes("/category/") ||
     path.includes("/tag/") ||
     path.includes("/author/") ||
+    path.includes("/insights-education/") ||
     path.includes("/blog/") ||
     path.includes("/page/") ||
     path.endsWith(".xml") ||

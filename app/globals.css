@@ -58,6 +58,22 @@
     mix-blend-mode: overlay;
   }
 
+  /**
+   * Mobile / narrow viewports: mix-blend on a fullscreen fixed layer forces costly
+   * compositing every scroll frame. Keep the grain; drop blend and nudge opacity.
+   */
+  @media (max-width: 1023px) {
+    .df-page-grain {
+      mix-blend-mode: normal;
+      opacity: 0.052;
+    }
+
+    html.dark .df-page-grain {
+      mix-blend-mode: normal;
+      opacity: 0.072;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .df-page-grain {
       opacity: 0.02;
@@ -69,5 +85,21 @@
 
   .investment-interest-dialog::backdrop {
     background-color: rgb(0 0 0 / 0.5);
+  }
+
+  /**
+   * Force semantic light surfaces for a subtree (matches :root tokens).
+   * Used when the document is `.dark` but a route should stay light (e.g. premier invitation).
+   */
+  .premier-invitation-light {
+    --df-background: #f9fafb;
+    --df-foreground: #111827;
+    --df-muted: #f3f4f6;
+    --df-muted-foreground: #4b5563;
+    --df-card: #ffffff;
+    --df-card-foreground: #111827;
+    --df-border: #e5e7eb;
+    background-color: var(--df-background);
+    color: var(--df-foreground);
   }
 }

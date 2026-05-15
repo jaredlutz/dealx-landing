@@ -1,11 +1,11 @@
 import Container from "@/components/ui/Container";
-import MainSiteChrome from "@/components/layout/MainSiteChrome";
+import MarketingShell from "@/components/layout/MarketingShell";
 import LegalHtmlBody from "@/components/legal/LegalHtmlBody";
 import { brand, cn } from "@/lib/theme";
 
-export default function LegalDocumentPage({ title, html }) {
+export default function LegalDocumentPage({ title, html, preContent }) {
   return (
-    <MainSiteChrome>
+    <MarketingShell>
       <Container className="pb-10 pt-8 sm:pb-14 sm:pt-12">
         <h1
           className={cn(
@@ -15,10 +15,11 @@ export default function LegalDocumentPage({ title, html }) {
         >
           {title}
         </h1>
+        {preContent ? <div className="mt-6">{preContent}</div> : null}
         <div className="mt-8 border-t border-border pt-8">
           <LegalHtmlBody html={html} />
         </div>
       </Container>
-    </MainSiteChrome>
+    </MarketingShell>
   );
 }

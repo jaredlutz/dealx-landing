@@ -39,7 +39,7 @@ export default function Footer() {
   return (
     <footer className={cn("py-10", brand.sectionFooter)}>
       <Container>
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-4">
           <div>
             <a href="/" className="inline-flex focus:outline-none focus-visible:ring-2 focus-visible:ring-diversy-primary/40 rounded-md">
               <img
@@ -75,13 +75,45 @@ export default function Footer() {
             </div>
           </div>
           <div>
+            <div className={cn("text-sm font-semibold", brand.text)}>Strategies</div>
+            <div className={cn("mt-2 text-sm", brand.muted)}>
+              <Link href="/strategies" className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}>
+                Investment thesis
+              </Link>
+              <Link
+                href="/opportunities/df-income"
+                className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}
+              >
+                DF Income / Multifamily Notes
+              </Link>
+              <Link
+                href="/insights-education/income-vs-growth"
+                className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}
+              >
+                Income vs growth
+              </Link>
+              <Link
+                href="/insights-education/ira"
+                className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}
+              >
+                Investing with an IRA
+              </Link>
+              <Link
+                href="/insights-education/retirement-accounts"
+                className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}
+              >
+                Investing with retirement accounts
+              </Link>
+            </div>
+          </div>
+          <div>
             <div className={cn("text-sm font-semibold", brand.text)}>Company</div>
             <div className={cn("mt-2 text-sm", brand.muted)}>
+              <Link href="/about" className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}>
+                About
+              </Link>
               <a href="/documents" className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}>
                 Documents
-              </a>
-              <a href="/offering-circular" className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}>
-                Offering circular
               </a>
               <a href="/terms-of-service" className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}>
                 Terms of Service

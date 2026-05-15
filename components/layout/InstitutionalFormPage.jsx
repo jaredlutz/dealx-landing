@@ -113,8 +113,9 @@ export default function InstitutionalFormPage({
               <div
                 className={cn(
                   "relative overflow-hidden rounded-2xl border border-border/90",
-                  "bg-card/90 p-6 shadow-[0_24px_60px_-24px_rgba(0,94,224,0.18)] backdrop-blur-sm",
-                  "dark:border-border dark:bg-card/80 dark:shadow-[0_28px_70px_-28px_rgba(0,94,224,0.25)]"
+                  "bg-card p-6 shadow-[0_24px_60px_-24px_rgba(0,94,224,0.18)]",
+                  "lg:bg-card/90 lg:backdrop-blur-sm",
+                  "dark:border-border dark:bg-card dark:shadow-[0_28px_70px_-28px_rgba(0,94,224,0.25)] lg:dark:bg-card/80"
                 )}
               >
                 <div

@@ -15,7 +15,7 @@ export default function MainSiteChrome({ children }) {
       <main className="flex-1 pb-20 sm:pb-24">{children}</main>
       <Footer />
       <div className="fixed bottom-0 left-0 right-0 z-30 lg:hidden">
-        <InvestStickyCta source="sticky-mobile-legal">Start Eligibility Review</InvestStickyCta>
+        <InvestStickyCta source="sticky-mobile-legal">Book Appointment</InvestStickyCta>
       </div>
     </div>
   );

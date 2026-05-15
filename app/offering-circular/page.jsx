@@ -1,5 +1,5 @@
 import { Download, ExternalLink, FileText } from "lucide-react";
-import MainSiteChrome from "@/components/layout/MainSiteChrome";
+import MarketingShell from "@/components/layout/MarketingShell";
 import Container from "@/components/ui/Container";
 import { offeringCircularDocuments } from "@/lib/offering-circular-docs";
 import { publicPageMetadata } from "@/lib/site-seo";
@@ -14,7 +14,7 @@ export const metadata = publicPageMetadata({
 
 export default function OfferingCircularPage() {
   return (
-    <MainSiteChrome>
+    <MarketingShell>
       <Container className="pb-10 pt-8 sm:pb-14 sm:pt-12">
         <h1
           className={cn(
@@ -98,6 +98,6 @@ export default function OfferingCircularPage() {
           ))}
         </ul>
       </Container>
-    </MainSiteChrome>
+    </MarketingShell>
   );
 }

@@ -20,7 +20,23 @@ export async function POST(request) {
     return NextResponse.json({ ok: true });
   }
 
-  const { firstName, lastName, email, phone, message, consentMarketingSms } = body;
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    message,
+    consentMarketingSms,
+    consentEmailPrivacy,
+    consentMarketingEmail,
+  } = body;
+
+  if (consentEmailPrivacy !== true) {
+    return NextResponse.json(
+      { ok: false, message: "Please confirm the Privacy Policy acknowledgment to submit this form." },
+      { status: 400 }
+    );
+  }
 
   if (!isNonEmptyString(firstName) || !isNonEmptyString(lastName)) {
     return NextResponse.json({ ok: false, message: "Name is required." }, { status: 400 });
@@ -50,6 +66,8 @@ export async function POST(request) {
     phone: hasPhone ? String(phone).trim() : undefined,
     message: message.trim(),
     consentMarketingSms: Boolean(consentMarketingSms),
+    consentEmailPrivacy: true,
+    consentMarketingEmail: Boolean(consentMarketingEmail),
     submittedAt: new Date().toISOString(),
   };
 

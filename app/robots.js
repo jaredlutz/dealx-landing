@@ -13,7 +13,15 @@ export default function robots() {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin/", "/callback", "/api/"],
+      disallow: [
+        "/admin/",
+        "/callback",
+        "/api/",
+        "/premier-program",
+        "/premier-program/in-person",
+        "/premier-program/private-invitation",
+        "/live-event/registered",
+      ],
     },
     sitemap: `${base}/sitemap.xml`,
     host,

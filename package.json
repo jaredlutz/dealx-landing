@@ -19,7 +19,8 @@
     "db:seed:multifamily": "bun run scripts/seed-multifamily-fund.ts",
     "db:seed:ira": "bun run scripts/seed-invest-ira.ts",
     "legal:sync": "bun run scripts/sync-legal-from-live.mjs",
-    "og:share": "bun run scripts/generate-og-share.mjs"
+    "og:share": "bun run scripts/generate-og-share.mjs",
+    "guide:ira": "bun run scripts/generate-ira-guide.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.0",
@@ -27,11 +28,14 @@
     "cheerio": "^1.2.0",
     "drizzle-orm": "^0.36.0",
     "framer-motion": "^11.11.17",
+    "gray-matter": "^4.0.3",
     "lucide-react": "^0.460.0",
     "next": "14.2.35",
     "next-themes": "^0.4.6",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",

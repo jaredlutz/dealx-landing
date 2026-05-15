@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
+import EmailConsentControls from "@/components/forms/EmailConsentControls";
 import {
   CONTACT_PAGE_PRIVACY_LEAD_IN,
   CONTACT_PAGE_SMS_PARAGRAPH_1,
@@ -28,6 +29,8 @@ export default function ContactFormClient() {
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [consentMarketingSms, setConsentMarketingSms] = useState(false);
+  const [consentEmailPrivacy, setConsentEmailPrivacy] = useState(false);
+  const [consentMarketingEmail, setConsentMarketingEmail] = useState(false);
   const [companyWebsite, setCompanyWebsite] = useState("");
 
   const phoneDigits = digitsOnly(phone);
@@ -66,6 +69,8 @@ export default function ContactFormClient() {
           phone: phone.trim() || undefined,
           message: message.trim(),
           consentMarketingSms: showPhoneConsent ? consentMarketingSms : false,
+          consentEmailPrivacy,
+          consentMarketingEmail,
           companyWebsite: companyWebsite || undefined,
         }),
       });
@@ -81,6 +86,8 @@ export default function ContactFormClient() {
       setPhone("");
       setMessage("");
       setConsentMarketingSms(false);
+      setConsentEmailPrivacy(false);
+      setConsentMarketingEmail(false);
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -201,6 +208,13 @@ export default function ContactFormClient() {
           placeholder="How can we help?"
         />
       </div>
+
+      <EmailConsentControls
+        privacyChecked={consentEmailPrivacy}
+        onPrivacyChange={setConsentEmailPrivacy}
+        marketingChecked={consentMarketingEmail}
+        onMarketingChange={setConsentMarketingEmail}
+      />
 
       {showPhoneConsent && (
         <div className="rounded-lg border border-border bg-muted/40 p-4">

@@ -7,6 +7,7 @@ import TopNav from "@/components/sections/TopNav";
 import Hero from "@/components/sections/Hero";
 import Structures from "@/components/sections/Structures";
 import Opportunities from "@/components/sections/Opportunities";
+import IraInvestingCta from "@/components/sections/IraInvestingCta";
 import Positioning from "@/components/sections/Positioning";
 import Testimonials from "@/components/sections/Testimonials";
 import Footer from "@/components/sections/Footer";
@@ -22,6 +23,7 @@ export default function LandingPage() {
         <Hero setActive={setActive} />
         <Structures />
         <Opportunities />
+        <IraInvestingCta />
         <Positioning />
         <Testimonials />
       </main>
@@ -30,7 +32,7 @@ export default function LandingPage() {
 
       {/* Sticky CTA on mobile */}
       <div className="fixed bottom-0 left-0 right-0 z-30 lg:hidden">
-        <InvestStickyCta source="sticky-mobile-landing">Start Eligibility Review</InvestStickyCta>
+        <InvestStickyCta source="sticky-mobile-landing">Book Appointment</InvestStickyCta>
       </div>
     </div>
   );

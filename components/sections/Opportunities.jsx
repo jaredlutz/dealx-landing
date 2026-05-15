@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import InvestCtaButton from "@/components/investment/InvestCtaButton";
 import { brand, cn } from "@/lib/theme";
 import Container from "@/components/ui/Container";
@@ -30,8 +31,19 @@ export default function Opportunities() {
             <div className={cn("mt-6 text-xs lg:max-w-xl", brand.subtle)}>
               Offering availability and details may vary by eligibility and jurisdiction.
             </div>
-            <div className="mt-8 w-fit">
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3">
               <InvestCtaButton source="opportunities">Review Current Opportunities</InvestCtaButton>
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-2">
+                <Link
+                  href="/opportunities/df-income"
+                  className={cn(
+                    "text-sm font-semibold text-diversy-primary underline-offset-4 hover:underline",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-diversy-primary/40 rounded-sm"
+                  )}
+                >
+                  DF Income / Multifamily Notes
+                </Link>
+              </div>
             </div>
           </div>
 

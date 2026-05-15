@@ -1,4 +1,3 @@
-import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 import SiteJsonLd from "@/components/seo/SiteJsonLd";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import { InvestmentInterestProvider } from "@/contexts/investment-interest-context";
@@ -47,9 +46,7 @@ export default function RootLayout({ children }) {
         <SiteJsonLd />
         <div className="df-page-grain" aria-hidden />
         <ThemeProvider>
-          <AuthKitProvider>
-            <InvestmentInterestProvider>{children}</InvestmentInterestProvider>
-          </AuthKitProvider>
+          <InvestmentInterestProvider>{children}</InvestmentInterestProvider>
         </ThemeProvider>
       </body>
     </html>

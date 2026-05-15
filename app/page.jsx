@@ -1,8 +1,6 @@
 import LandingPage from "@/components/LandingPage";
 import { SITE_DEFAULT_DESCRIPTION, SITE_NAME } from "@/lib/site-seo";
 
-export const dynamic = "force-dynamic";
-
 const homeOgTitle = `${SITE_NAME} — ${SITE_DEFAULT_DESCRIPTION}`;
 
 export const metadata = {
@@ -23,6 +21,6 @@ export const metadata = {
   },
 };
 
-export default async function Home() {
+export default function Home() {
   return <LandingPage />;
 }

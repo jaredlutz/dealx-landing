@@ -28,7 +28,16 @@ export async function POST(request) {
     message,
     consentTransactionalSms,
     consentMarketingSms,
+    consentEmailPrivacy,
+    consentMarketingEmail,
   } = body;
+
+  if (consentEmailPrivacy !== true) {
+    return NextResponse.json(
+      { ok: false, message: "Please confirm the Privacy Policy acknowledgment to submit this form." },
+      { status: 400 }
+    );
+  }
 
   if (!isNonEmptyString(name) || !isNonEmptyString(email) || !isNonEmptyString(message)) {
     return NextResponse.json({ ok: false, message: "Missing required fields." }, { status: 400 });
@@ -59,6 +68,8 @@ export async function POST(request) {
     message: message.trim(),
     consentTransactionalSms: Boolean(consentTransactionalSms),
     consentMarketingSms: Boolean(consentMarketingSms),
+    consentEmailPrivacy: true,
+    consentMarketingEmail: Boolean(consentMarketingEmail),
     submittedAt: new Date().toISOString(),
   };
 

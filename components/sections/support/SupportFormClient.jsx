@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
+import EmailConsentControls from "@/components/forms/EmailConsentControls";
 import { SMS_CONSENT_MARKETING, SMS_CONSENT_TRANSACTIONAL } from "@/lib/investment-interest-consent";
 import { publicInputClass, publicLabelClass } from "@/lib/public-form-styles";
 import { brand, cn } from "@/lib/theme";
@@ -32,6 +33,8 @@ export default function SupportFormClient() {
   const [message, setMessage] = useState("");
   const [consentTransactional, setConsentTransactional] = useState(false);
   const [consentMarketing, setConsentMarketing] = useState(false);
+  const [consentEmailPrivacy, setConsentEmailPrivacy] = useState(false);
+  const [consentMarketingEmail, setConsentMarketingEmail] = useState(false);
   const [companyWebsite, setCompanyWebsite] = useState("");
 
   const phoneDigits = digitsOnly(phone);
@@ -71,6 +74,8 @@ export default function SupportFormClient() {
           message: message.trim(),
           consentTransactionalSms: showSms ? consentTransactional : false,
           consentMarketingSms: showSms ? consentMarketing : false,
+          consentEmailPrivacy,
+          consentMarketingEmail,
           companyWebsite: companyWebsite || undefined,
         }),
       });
@@ -87,6 +92,8 @@ export default function SupportFormClient() {
       setMessage("");
       setConsentTransactional(false);
       setConsentMarketing(false);
+      setConsentEmailPrivacy(false);
+      setConsentMarketingEmail(false);
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -210,6 +217,13 @@ export default function SupportFormClient() {
           placeholder="Describe your question or issue…"
         />
       </div>
+
+      <EmailConsentControls
+        privacyChecked={consentEmailPrivacy}
+        onPrivacyChange={setConsentEmailPrivacy}
+        marketingChecked={consentMarketingEmail}
+        onMarketingChange={setConsentMarketingEmail}
+      />
 
       {showSms && (
         <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-4">
