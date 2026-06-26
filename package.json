@@ -20,7 +20,9 @@
     "db:seed:ira": "bun run scripts/seed-invest-ira.ts",
     "legal:sync": "bun run scripts/sync-legal-from-live.mjs",
     "og:share": "bun run scripts/generate-og-share.mjs",
-    "guide:ira": "bun run scripts/generate-ira-guide.ts"
+    "guide:ira": "bun run scripts/generate-ira-guide.ts",
+    "verify:deck-signup": "bun run scripts/verify-deck-signup-contract.ts",
+    "verify:deck-signup:live": "bun run scripts/verify-deck-signup-contract.ts -- --live"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.0",

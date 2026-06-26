@@ -7,6 +7,10 @@ import EmailConsentControls from "@/components/forms/EmailConsentControls";
 import SmsVerificationStep from "@/components/forms/SmsVerificationStep";
 import VoiceAiCallConsentControl from "@/components/forms/VoiceAiCallConsentControl";
 import { trackDfIncomeDeckRequested } from "@/lib/analytics/trackDfIncomeDeckRequest";
+import {
+  buildOAuthDeckSignupBody,
+  formatDeckSignupValidationError,
+} from "@/lib/book/dfIncomeDeckSignupPayload";
 import { deckFormInputClass, deckFormLabelClass } from "@/lib/book/deckFormStyles";
 import {
   SMS_CONSENT_MARKETING,
@@ -119,10 +123,7 @@ export default function Df2026DeckLeadSignupForm({
   }
 
   function deckErrorMessage(data) {
-    if (data?.error === "missing_identity") {
-      return "We need your email or phone to send materials. Please try again.";
-    }
-    return data?.message || data?.error || "Something went wrong. Please try again.";
+    return formatDeckSignupValidationError(data);
   }
 
   function smsErrorMessage(code) {
@@ -198,6 +199,10 @@ export default function Df2026DeckLeadSignupForm({
         setError("We couldn't read your sign-in email. Please use the email tab or try Google/LinkedIn again.");
         return;
       }
+      if (!firstName.trim() && !sessionFirstName.trim()) {
+        setError("We couldn't read your name from sign-in. Please enter your first name below.");
+        return;
+      }
     }
 
     if (!investmentRange) {
@@ -250,12 +255,22 @@ export default function Df2026DeckLeadSignupForm({
         deckBody.email = email.trim();
         if (phone.trim()) deckBody.phone = phone.trim();
       } else if (mode === "capital") {
-        deckBody.signupMethod = "oauth_or_existing";
-        deckBody.firstName = firstName.trim() || sessionFirstName;
-        deckBody.lastName = lastName.trim();
-        deckBody.email = email.trim();
-        if (sessionUserId) deckBody.workosUserId = sessionUserId;
-        if (phone.trim()) deckBody.phone = phone.trim();
+        Object.assign(
+          deckBody,
+          buildOAuthDeckSignupBody({
+            source,
+            investmentRange,
+            consentEmailPrivacy,
+            consentMarketingEmail,
+            companyWebsite,
+            firstName,
+            lastName,
+            email,
+            phone,
+            sessionFirstName,
+            sessionUserId,
+          })
+        );
       }
 
       const data = await postDeckSignup(deckBody);
@@ -560,6 +575,39 @@ export default function Df2026DeckLeadSignupForm({
           again — we&apos;ll refresh your profile if anything changed.
         </p>
       ) : null}
+
+      {mode === "capital" && !lastName.trim() && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {!firstName.trim() && !sessionFirstName.trim() ? (
+            <div>
+              <label className={deckFormLabelClass} htmlFor={`${formId}-capital-first`}>
+                First name
+              </label>
+              <input
+                id={`${formId}-capital-first`}
+                className={deckFormInputClass}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                autoComplete="given-name"
+                required
+              />
+            </div>
+          ) : null}
+          <div className={!firstName.trim() && !sessionFirstName.trim() ? "" : "sm:col-span-2"}>
+            <label className={deckFormLabelClass} htmlFor={`${formId}-capital-last`}>
+              Last name{" "}
+              <span className="font-normal text-zinc-500">(optional — helps us personalize materials)</span>
+            </label>
+            <input
+              id={`${formId}-capital-last`}
+              className={deckFormInputClass}
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              autoComplete="family-name"
+            />
+          </div>
+        </div>
+      )}
 
       {(mode === "capital" || (mode === "signup" && (authTab === "email" || authTab === "text"))) && (
         <>
