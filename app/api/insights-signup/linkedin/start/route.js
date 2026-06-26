@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getWorkOS } from "@workos-inc/authkit-nextjs";
+import { getWorkOsRedirectUri } from "@/lib/workos-redirect-uri";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(request) {
   const clientId = process.env.WORKOS_CLIENT_ID;
-  const redirectUri = process.env.NEXT_PUBLIC_WORKOS_REDIRECT_URI;
+  const redirectUri = getWorkOsRedirectUri();
   if (!clientId || !redirectUri) {
     return NextResponse.json(
       { ok: false, message: "Sign-up is temporarily unavailable. Please try again later." },

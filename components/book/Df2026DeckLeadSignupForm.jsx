@@ -4,15 +4,14 @@ import { useEffect, useId, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import EmailConsentControls from "@/components/forms/EmailConsentControls";
-import EmailVerificationStep from "@/components/forms/EmailVerificationStep";
 import SmsVerificationStep from "@/components/forms/SmsVerificationStep";
 import VoiceAiCallConsentControl from "@/components/forms/VoiceAiCallConsentControl";
 import { trackDfIncomeDeckRequested } from "@/lib/analytics/trackDfIncomeDeckRequest";
+import { deckFormInputClass, deckFormLabelClass } from "@/lib/book/deckFormStyles";
 import {
   SMS_CONSENT_MARKETING,
   SMS_CONSENT_TRANSACTIONAL,
 } from "@/lib/investment-interest-consent";
-import { publicInputClass, publicLabelClass } from "@/lib/public-form-styles";
 import { brand, cn } from "@/lib/theme";
 
 const RANGE_OPTIONS = [
@@ -29,7 +28,7 @@ const AUTH_TABS = [
 ];
 
 /**
- * DF Income deck request — lighter gate: Google/LinkedIn, email OTP, or text (when available).
+ * DF Income deck request — Google/LinkedIn, email (no OTP), or SMS verification.
  */
 export default function Df2026DeckLeadSignupForm({
   source,
@@ -44,6 +43,7 @@ export default function Df2026DeckLeadSignupForm({
   const [mode, setMode] = useState("loading");
   const [authTab, setAuthTab] = useState("social");
   const [sessionFirstName, setSessionFirstName] = useState("");
+  const [sessionUserId, setSessionUserId] = useState("");
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -59,9 +59,6 @@ export default function Df2026DeckLeadSignupForm({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const [pendingToken, setPendingToken] = useState("");
-  const [pendingUserId, setPendingUserId] = useState("");
-  const [pendingEmail, setPendingEmail] = useState("");
   const [pendingVerificationId, setPendingVerificationId] = useState("");
   const [pendingPhone, setPendingPhone] = useState("");
 
@@ -77,6 +74,10 @@ export default function Df2026DeckLeadSignupForm({
         }
         if (data.status === "partial" || data.status === "unlocked") {
           setSessionFirstName(typeof data.firstName === "string" ? data.firstName : "");
+          setSessionUserId(typeof data.userId === "string" ? data.userId : "");
+          if (typeof data.firstName === "string") setFirstName(data.firstName);
+          if (typeof data.lastName === "string") setLastName(data.lastName);
+          if (typeof data.email === "string") setEmail(data.email);
           setMode("capital");
         } else {
           setMode("signup");
@@ -108,14 +109,20 @@ export default function Df2026DeckLeadSignupForm({
     });
   }
 
-  async function postSignup(body) {
-    const res = await fetch("/api/lead-signup", {
+  async function postDeckSignup(body) {
+    const res = await fetch("/api/crm/df-income-deck-signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
       body: JSON.stringify(body),
     });
     return res.json();
+  }
+
+  function deckErrorMessage(data) {
+    if (data?.error === "missing_identity") {
+      return "We need your email or phone to send materials. Please try again.";
+    }
+    return data?.message || data?.error || "Something went wrong. Please try again.";
   }
 
   function smsErrorMessage(code) {
@@ -186,6 +193,13 @@ export default function Df2026DeckLeadSignupForm({
       }
     }
 
+    if (mode === "capital") {
+      if (!email.trim()) {
+        setError("We couldn't read your sign-in email. Please use the email tab or try Google/LinkedIn again.");
+        return;
+      }
+    }
+
     if (!investmentRange) {
       setError("Please select an investment range.");
       return;
@@ -221,8 +235,7 @@ export default function Df2026DeckLeadSignupForm({
         return;
       }
 
-      const body = {
-        intent: "df-2026-deck",
+      const deckBody = {
         source,
         investmentRange,
         consentEmailPrivacy,
@@ -231,63 +244,26 @@ export default function Df2026DeckLeadSignupForm({
       };
 
       if (mode === "signup" && authTab === "email") {
-        body.signupMethod = "email_otp";
-        body.firstName = firstName.trim();
-        body.lastName = lastName.trim();
-        body.email = email.trim();
-        if (phone.trim()) body.phone = phone.trim();
+        deckBody.signupMethod = "email_direct";
+        deckBody.firstName = firstName.trim();
+        deckBody.lastName = lastName.trim();
+        deckBody.email = email.trim();
+        if (phone.trim()) deckBody.phone = phone.trim();
+      } else if (mode === "capital") {
+        deckBody.signupMethod = "oauth_or_existing";
+        deckBody.firstName = firstName.trim() || sessionFirstName;
+        deckBody.lastName = lastName.trim();
+        deckBody.email = email.trim();
+        if (sessionUserId) deckBody.workosUserId = sessionUserId;
+        if (phone.trim()) deckBody.phone = phone.trim();
       }
 
-      const data = await postSignup(body);
+      const data = await postDeckSignup(deckBody);
       if (!data.ok) {
-        setError(data.message || "Something went wrong. Please try again.");
-        return;
-      }
-      if (data.status === "verify_email" && data.pendingAuthenticationToken) {
-        setPendingToken(data.pendingAuthenticationToken);
-        setPendingUserId(data.userId ?? "");
-        setPendingEmail(data.email ?? email.trim());
-        setMode("verify");
+        setError(deckErrorMessage(data));
         return;
       }
       trackDeckRequestComplete(mode === "capital" ? "capital" : authTab);
-      onSuccess({
-        firstName: data.firstName ?? firstName,
-        lastName: data.lastName ?? lastName,
-        email: data.email ?? email,
-        materialsTid: data.materialsTid ?? null,
-      });
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  async function handleVerifySubmit(code) {
-    setError("");
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/lead-signup/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          intent: "df-2026-deck",
-          source,
-          code,
-          pendingAuthenticationToken: pendingToken,
-          investmentRange,
-          consentEmailPrivacy,
-          consentMarketingEmail,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.ok) {
-        setError(data.message || "That code didn't work. Please try again.");
-        return;
-      }
-      trackDeckRequestComplete("verified");
       onSuccess({
         firstName: data.firstName ?? firstName,
         lastName: data.lastName ?? lastName,
@@ -360,32 +336,16 @@ export default function Df2026DeckLeadSignupForm({
     if (data.maskedPhone) setPendingPhone(data.maskedPhone);
   }
 
-  async function handleResendCode() {
-    if (!pendingUserId) throw new Error("Missing user reference. Please start sign-up again.");
-    const res = await fetch("/api/lead-signup/resend", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ userId: pendingUserId }),
-    });
-    const data = await res.json();
-    if (!res.ok || !data.ok) {
-      throw new Error(data.message || "We couldn't resend the code. Please try again.");
-    }
-  }
-
   const defaultSubmitLabel = submitting
-    ? mode === "signup" && authTab === "email"
-      ? "Sending verification…"
-      : mode === "signup" && authTab === "text"
-        ? "Sending verification text…"
-        : "Submitting…"
+    ? mode === "signup" && authTab === "text"
+      ? "Sending verification text…"
+      : "Submitting…"
     : mode === "signup" && authTab === "social"
       ? "Continue after signing in above"
       : mode === "signup" && authTab === "text"
         ? "Send verification text"
         : mode === "signup"
-          ? "Confirm email & request deck"
+          ? "Request the investor deck"
           : "Request the deck";
 
   if (mode === "loading") {
@@ -410,27 +370,6 @@ export default function Df2026DeckLeadSignupForm({
           setError("");
           setPendingVerificationId("");
           setPendingPhone("");
-          setMode("signup");
-        }}
-      />
-    );
-  }
-
-  if (mode === "verify") {
-    return (
-      <EmailVerificationStep
-        email={pendingEmail || email.trim()}
-        userId={pendingUserId}
-        submitting={submitting}
-        submitLabel="Verify and open materials"
-        error={error}
-        onSubmit={handleVerifySubmit}
-        onResend={handleResendCode}
-        onBack={() => {
-          setError("");
-          setPendingToken("");
-          setPendingUserId("");
-          setPendingEmail("");
           setMode("signup");
         }}
       />
@@ -499,12 +438,12 @@ export default function Df2026DeckLeadSignupForm({
             <div className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className={publicLabelClass} htmlFor={`${formId}-first`}>
+                  <label className={deckFormLabelClass} htmlFor={`${formId}-first`}>
                     First name
                   </label>
                   <input
                     id={`${formId}-first`}
-                    className={publicInputClass}
+                    className={deckFormInputClass}
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     autoComplete="given-name"
@@ -512,12 +451,12 @@ export default function Df2026DeckLeadSignupForm({
                   />
                 </div>
                 <div>
-                  <label className={publicLabelClass} htmlFor={`${formId}-last`}>
+                  <label className={deckFormLabelClass} htmlFor={`${formId}-last`}>
                     Last name
                   </label>
                   <input
                     id={`${formId}-last`}
-                    className={publicInputClass}
+                    className={deckFormInputClass}
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     autoComplete="family-name"
@@ -526,13 +465,13 @@ export default function Df2026DeckLeadSignupForm({
                 </div>
               </div>
               <div>
-                <label className={publicLabelClass} htmlFor={`${formId}-email`}>
+                <label className={deckFormLabelClass} htmlFor={`${formId}-email`}>
                   Email
                 </label>
                 <input
                   id={`${formId}-email`}
                   type="email"
-                  className={publicInputClass}
+                  className={deckFormInputClass}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
@@ -540,13 +479,13 @@ export default function Df2026DeckLeadSignupForm({
                 />
               </div>
               <div>
-                <label className={publicLabelClass} htmlFor={`${formId}-phone`}>
+                <label className={deckFormLabelClass} htmlFor={`${formId}-phone`}>
                   Phone <span className="font-normal text-zinc-500">(optional)</span>
                 </label>
                 <input
                   id={`${formId}-phone`}
                   type="tel"
-                  className={publicInputClass}
+                  className={deckFormInputClass}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   autoComplete="tel"
@@ -559,12 +498,12 @@ export default function Df2026DeckLeadSignupForm({
             <div className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className={publicLabelClass} htmlFor={`${formId}-text-first`}>
+                  <label className={deckFormLabelClass} htmlFor={`${formId}-text-first`}>
                     First name
                   </label>
                   <input
                     id={`${formId}-text-first`}
-                    className={publicInputClass}
+                    className={deckFormInputClass}
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     autoComplete="given-name"
@@ -572,12 +511,12 @@ export default function Df2026DeckLeadSignupForm({
                   />
                 </div>
                 <div>
-                  <label className={publicLabelClass} htmlFor={`${formId}-text-last`}>
+                  <label className={deckFormLabelClass} htmlFor={`${formId}-text-last`}>
                     Last name
                   </label>
                   <input
                     id={`${formId}-text-last`}
-                    className={publicInputClass}
+                    className={deckFormInputClass}
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     autoComplete="family-name"
@@ -586,13 +525,13 @@ export default function Df2026DeckLeadSignupForm({
                 </div>
               </div>
               <div>
-                <label className={publicLabelClass} htmlFor={`${formId}-text-phone`}>
+                <label className={deckFormLabelClass} htmlFor={`${formId}-text-phone`}>
                   Mobile phone
                 </label>
                 <input
                   id={`${formId}-text-phone`}
                   type="tel"
-                  className={publicInputClass}
+                  className={deckFormInputClass}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   autoComplete="tel"
@@ -600,13 +539,13 @@ export default function Df2026DeckLeadSignupForm({
                 />
               </div>
               <div>
-                <label className={publicLabelClass} htmlFor={`${formId}-text-email`}>
+                <label className={deckFormLabelClass} htmlFor={`${formId}-text-email`}>
                   Email <span className="font-normal text-zinc-500">(optional — deck copy by email)</span>
                 </label>
                 <input
                   id={`${formId}-text-email`}
                   type="email"
-                  className={publicInputClass}
+                  className={deckFormInputClass}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
@@ -616,18 +555,21 @@ export default function Df2026DeckLeadSignupForm({
           )}
         </>
       ) : sessionFirstName ? (
-        <p className={cn("text-sm", brand.muted)}>Welcome back, {sessionFirstName}. Complete your deck request below.</p>
+        <p className={cn("text-sm text-[#4b5563]")}>
+          Welcome back, {sessionFirstName}. Confirm your investment range below to open the materials
+          again — we&apos;ll refresh your profile if anything changed.
+        </p>
       ) : null}
 
       {(mode === "capital" || (mode === "signup" && (authTab === "email" || authTab === "text"))) && (
         <>
       <div>
-        <label className={publicLabelClass} htmlFor={`${formId}-range`}>
+        <label className={deckFormLabelClass} htmlFor={`${formId}-range`}>
           Investment range
         </label>
         <select
           id={`${formId}-range`}
-          className={publicInputClass}
+          className={deckFormInputClass}
           value={investmentRange}
           onChange={(e) => setInvestmentRange(e.target.value)}
           required

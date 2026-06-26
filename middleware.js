@@ -45,8 +45,12 @@ export default async function middleware(request) {
     return NextResponse.next();
   }
 
+  const redirectUri =
+    process.env.NEXT_PUBLIC_WORKOS_REDIRECT_URI?.trim() ||
+    process.env.WORKOS_REDIRECT_URI?.trim();
+
   const { session, headers: authkitHeaders, authorizationUrl } = await authkit(request, {
-    redirectUri: process.env.NEXT_PUBLIC_WORKOS_REDIRECT_URI,
+    redirectUri,
   });
 
   // Admin is the only "protected" surface — public insights routes pass through unauthenticated
