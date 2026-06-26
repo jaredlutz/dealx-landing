@@ -13,6 +13,10 @@ import {
   BookingSkeleton,
 } from "@/components/book/bookingUi";
 import { PUBLIC_BOOKING_CARD_CLASS } from "@/lib/book/publicBookingResourceLinks";
+import {
+  INVESTOR_CALL_PAGE_DESCRIPTION,
+  INVESTOR_CALL_PAGE_TITLE,
+} from "@/lib/book/investorCallBookingContent";
 import { cn } from "@/lib/theme";
 
 function parseCalendarIds(raw) {
@@ -92,8 +96,8 @@ function BookPageContent() {
   return (
     <PublicBookingPageShell
       eyebrow="Accredited investors · DiversyFund"
-      title="Book a call with Craig Cecilio"
-      description="Schedule a live conversation with our founder. Choose a time that works for you—we'll send confirmation details by email."
+      title={INVESTOR_CALL_PAGE_TITLE}
+      description={INVESTOR_CALL_PAGE_DESCRIPTION}
     >
       <PublicBookingScheduler calendarIds={calendarIds} onConfirmation={setConfirmation} />
     </PublicBookingPageShell>

@@ -22,6 +22,9 @@ import { SMS_CONSENT_MARKETING } from "@/lib/investment-interest-consent";
 import {
   INVESTOR_CALL_BEFORE_CALL_BLURB,
   INVESTOR_CALL_BOOKING_DOWNLOADS,
+  INVESTOR_CALL_PAGE_DESCRIPTION,
+  INVESTOR_CALL_PAGE_TITLE,
+  INVESTOR_CALL_REP_DISPLAY_NAME,
 } from "@/lib/book/investorCallBookingContent";
 import { parseLpInvestorCallBookingSource } from "@/lib/book/parseLpInvestorCallBookingSource";
 import { PUBLIC_BOOKING_CARD_CLASS } from "@/lib/book/publicBookingResourceLinks";
@@ -240,8 +243,8 @@ function BookInvestorCallContent() {
 
   const shellProps = {
     eyebrow: "Accredited investors · DiversyFund",
-    title: "Book a call with Craig Cecilio",
-    description: "Schedule a live conversation with Craig Cecilio, our founder. Times shown are from his calendar.",
+    title: INVESTOR_CALL_PAGE_TITLE,
+    description: INVESTOR_CALL_PAGE_DESCRIPTION,
     beforeCallBlurb: INVESTOR_CALL_BEFORE_CALL_BLURB,
     downloads: INVESTOR_CALL_BOOKING_DOWNLOADS,
   };
@@ -320,7 +323,7 @@ function BookInvestorCallContent() {
         <BookingCardHeader>
           <BookingCardTitle>Pick a time</BookingCardTitle>
           <BookingCardDescription>
-            Choose a day, then a start time. 30-minute slots · Weekdays · {tzHint} · Craig Cecilio
+            Choose a day, then a start time. 30-minute slots · Weekdays · {tzHint} · {INVESTOR_CALL_REP_DISPLAY_NAME}
           </BookingCardDescription>
         </BookingCardHeader>
         <BookingCardContent>
