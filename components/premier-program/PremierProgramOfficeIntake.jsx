@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, Building2, CalendarDays, CircleDollarSign, Phone, UsersRound } from "lucide-react";
 import EmailConsentControls from "@/components/forms/EmailConsentControls";
+import VoiceAiCallConsentControl from "@/components/forms/VoiceAiCallConsentControl";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
@@ -61,6 +62,7 @@ export default function PremierProgramOfficeIntake({ crmBookingInPerson = "", cr
   const [consentTransactionalSms, setConsentTransactionalSms] = useState(false);
   const [consentEmailPrivacy, setConsentEmailPrivacy] = useState(false);
   const [consentMarketingEmail, setConsentMarketingEmail] = useState(false);
+  const [consentVoiceAiCall, setConsentVoiceAiCall] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [doneAudience, setDoneAudience] = useState(null);
@@ -93,6 +95,7 @@ export default function PremierProgramOfficeIntake({ crmBookingInPerson = "", cr
             consentTransactionalSms,
             consentEmailPrivacy,
             consentMarketingEmail,
+            consentVoiceAiCall,
             intakeVariant: "premier_in_person",
             utm_campaign: utm.utm_campaign || undefined,
             utm_source: utm.utm_source || undefined,
@@ -120,6 +123,7 @@ export default function PremierProgramOfficeIntake({ crmBookingInPerson = "", cr
       consentTransactionalSms,
       consentEmailPrivacy,
       consentMarketingEmail,
+      consentVoiceAiCall,
       utm,
     ]
   );
@@ -449,6 +453,10 @@ export default function PremierProgramOfficeIntake({ crmBookingInPerson = "", cr
                     />
                     <span>I agree to receive transactional messages at this number regarding my request.</span>
                   </label>
+                  <VoiceAiCallConsentControl
+                    checked={consentVoiceAiCall}
+                    onChange={setConsentVoiceAiCall}
+                  />
 
                   {error ? <p className="text-sm font-medium text-red-600 dark:text-red-400">{error}</p> : null}
 

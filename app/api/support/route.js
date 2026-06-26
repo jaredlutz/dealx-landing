@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { postJsonWebhook } from "@/lib/forward-webhook";
+import { DF_WEBSITE_SOURCE } from "@/lib/site-source";
 
 function isNonEmptyString(v) {
   return typeof v === "string" && v.trim().length > 0;
@@ -60,7 +61,7 @@ export async function POST(request) {
 
   const payload = {
     type: "investor_support",
-    source: "fixed-note-lp",
+    source: DF_WEBSITE_SOURCE,
     name: name.trim(),
     email: email.trim().toLowerCase(),
     phone: hasPhone ? String(phone).trim() : undefined,

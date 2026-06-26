@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useId, useState } from "react";
 import EmailConsentControls from "@/components/forms/EmailConsentControls";
+import VoiceAiCallConsentControl from "@/components/forms/VoiceAiCallConsentControl";
 import {
   CONTACT_PAGE_PRIVACY_LEAD_IN,
   CONTACT_PAGE_SMS_PARAGRAPH_1,
@@ -29,6 +30,7 @@ export default function ContactFormClient() {
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [consentMarketingSms, setConsentMarketingSms] = useState(false);
+  const [consentVoiceAiCall, setConsentVoiceAiCall] = useState(false);
   const [consentEmailPrivacy, setConsentEmailPrivacy] = useState(false);
   const [consentMarketingEmail, setConsentMarketingEmail] = useState(false);
   const [companyWebsite, setCompanyWebsite] = useState("");
@@ -69,6 +71,7 @@ export default function ContactFormClient() {
           phone: phone.trim() || undefined,
           message: message.trim(),
           consentMarketingSms: showPhoneConsent ? consentMarketingSms : false,
+          consentVoiceAiCall: showPhoneConsent ? consentVoiceAiCall : false,
           consentEmailPrivacy,
           consentMarketingEmail,
           companyWebsite: companyWebsite || undefined,
@@ -86,6 +89,7 @@ export default function ContactFormClient() {
       setPhone("");
       setMessage("");
       setConsentMarketingSms(false);
+      setConsentVoiceAiCall(false);
       setConsentEmailPrivacy(false);
       setConsentMarketingEmail(false);
     } catch {
@@ -227,6 +231,11 @@ export default function ContactFormClient() {
             />
             <span className={cn("text-xs leading-snug", brand.muted)}>{CONTACT_SMS_MARKETING_CHECKBOX_SUMMARY}</span>
           </label>
+          <VoiceAiCallConsentControl
+            checked={consentVoiceAiCall}
+            onChange={setConsentVoiceAiCall}
+            className="mt-3"
+          />
         </div>
       )}
 

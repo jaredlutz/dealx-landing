@@ -14,7 +14,6 @@ const ALLOWED_RANGES = new Set([
   "100k_250k",
   "250k_1m",
   "1m_plus",
-  "prefer_not",
 ]);
 
 const ALLOWED_SOCIAL_PLATFORMS = new Set([

@@ -55,6 +55,7 @@ export async function GET() {
 
   return NextResponse.json({
     status: unlocked ? "unlocked" : "partial",
+    userId: user.id,
     firstName: user.firstName || "",
     lastName: user.lastName || "",
     email: user.email,

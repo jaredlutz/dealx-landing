@@ -4,6 +4,7 @@ import { useEffect, useId, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Linkedin, Loader2 } from "lucide-react";
 import EmailConsentControls from "@/components/forms/EmailConsentControls";
+import VoiceAiCallConsentControl from "@/components/forms/VoiceAiCallConsentControl";
 import EmailVerificationStep from "@/components/forms/EmailVerificationStep";
 import PasswordField from "@/components/forms/PasswordField";
 import {
@@ -44,7 +45,6 @@ const RANGE_OPTIONS = [
   { value: "100k_250k", label: "$100,000 – $250,000" },
   { value: "250k_1m", label: "$250,000 – $1,000,000" },
   { value: "1m_plus", label: "$1,000,000+" },
-  { value: "prefer_not", label: "Prefer not to say" },
 ];
 
 const SOCIAL_PLATFORM_OPTIONS = [
@@ -118,6 +118,7 @@ export default function LeadSignupForm({
   const [consentMarketingEmail, setConsentMarketingEmail] = useState(false);
   const [consentTransactionalSms, setConsentTransactionalSms] = useState(false);
   const [consentMarketingSms, setConsentMarketingSms] = useState(false);
+  const [consentVoiceAiCall, setConsentVoiceAiCall] = useState(false);
   const [companyWebsite, setCompanyWebsite] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -269,6 +270,7 @@ export default function LeadSignupForm({
           body.phone = phone.trim();
           body.consentTransactionalSms = consentTransactionalSms;
           body.consentMarketingSms = consentMarketingSms;
+          body.consentVoiceAiCall = consentVoiceAiCall;
         }
       }
       const res = await fetch("/api/lead-signup", {
@@ -331,6 +333,7 @@ export default function LeadSignupForm({
           verifyBody.phone = phone.trim();
           verifyBody.consentTransactionalSms = consentTransactionalSms;
           verifyBody.consentMarketingSms = consentMarketingSms;
+          verifyBody.consentVoiceAiCall = consentVoiceAiCall;
         }
       }
       const res = await fetch("/api/lead-signup/verify", {
@@ -683,6 +686,10 @@ export default function LeadSignupForm({
             />
             <span className={cn("text-xs leading-snug", brand.muted)}>{SMS_CONSENT_MARKETING}</span>
           </label>
+          <VoiceAiCallConsentControl
+            checked={consentVoiceAiCall}
+            onChange={setConsentVoiceAiCall}
+          />
         </div>
       ) : null}
 

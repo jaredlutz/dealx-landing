@@ -16,7 +16,6 @@ const ALLOWED_RANGES = new Set([
   "100k_250k",
   "250k_1m",
   "1m_plus",
-  "prefer_not",
 ]);
 
 // Email/password sign-ups must provide a social handle so sales has a discoverable

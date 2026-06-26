@@ -17,7 +17,6 @@ const RANGE_OPTIONS = [
   { value: "100k_250k", label: "$100,000 – $250,000" },
   { value: "250k_1m", label: "$250,000 – $1,000,000" },
   { value: "1m_plus", label: "$1,000,000+" },
-  { value: "prefer_not", label: "Prefer not to say" },
 ];
 
 // Email/password sign-ups must point us at a real profile. LinkedIn sign-ups

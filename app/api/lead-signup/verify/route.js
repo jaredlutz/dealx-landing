@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getWorkOS } from "@workos-inc/authkit-nextjs";
 import {
+  forwardDeckSignupWebhook,
   forwardLeadWebhook,
   persistUserMetadata,
   syncAuthkitSession,
@@ -9,14 +10,13 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED_INTENTS = new Set(["ira-download", "income-investments"]);
+const ALLOWED_INTENTS = new Set(["ira-download", "income-investments", "df-2026-deck"]);
 
 const ALLOWED_RANGES = new Set([
   "under_100k",
   "100k_250k",
   "250k_1m",
   "1m_plus",
-  "prefer_not",
 ]);
 
 const ALLOWED_SOCIAL_PLATFORMS = new Set([
@@ -90,6 +90,7 @@ export async function POST(request) {
     return NextResponse.json({ ok: false, message: "Unknown sign-up intent." }, { status: 400 });
   }
   const isIncomeInvestments = intent === "income-investments";
+  const isDeckSignup = intent === "df-2026-deck";
 
   const source = isNonEmptyString(body.source) ? body.source.trim().slice(0, 120) : "modal";
 
@@ -106,6 +107,7 @@ export async function POST(request) {
     consentMarketingEmail,
     consentTransactionalSms,
     consentMarketingSms,
+    consentVoiceAiCall,
   } = body;
 
   if (!isNonEmptyString(code)) {
@@ -234,34 +236,68 @@ export async function POST(request) {
   }
 
   const smsEligible = isIncomeInvestments && Boolean(phone);
-  await forwardLeadWebhook({
-    webhookEnv: {
-      url: process.env.INVESTMENT_INTEREST_WEBHOOK_URL,
-      secret: process.env.INVESTMENT_INTEREST_WEBHOOK_SECRET,
-    },
-    payload: {
-      type: "investment_interest",
-      source: `${intent}:${source}`,
-      intent,
-      workosUserId: userId,
-      firstName: updatedUser.firstName || firstName,
-      lastName: updatedUser.lastName || lastName,
-      email: updatedUser.email || email,
-      phone,
-      investmentRange,
-      investmentTimeline,
-      primaryGoal,
-      socialPlatform,
-      socialHandle,
-      signupMethod: "password_email_verification",
-      consentTransactionalSms: smsEligible ? Boolean(consentTransactionalSms) : false,
-      consentMarketingSms: smsEligible ? Boolean(consentMarketingSms) : false,
-      consentEmailPrivacy: true,
-      consentMarketingEmail: Boolean(consentMarketingEmail),
-      submittedAt: nowIso,
-    },
-    logTag: "lead-signup/verify",
-  });
+  /** @type {string | null} */ let materialsTid = null;
+
+  if (isDeckSignup) {
+    const deckWebhook = await forwardDeckSignupWebhook(
+      {
+        source,
+        firstName: updatedUser.firstName || firstName,
+        lastName: updatedUser.lastName || lastName,
+        email: updatedUser.email || email,
+        phone: phone || null,
+        investmentRange,
+        workosUserId: userId,
+        signupMethod: "email_otp_verified",
+        socialPlatform,
+        socialHandle,
+        consentEmailPrivacy: true,
+        consentMarketingEmail: Boolean(consentMarketingEmail),
+        consentTransactionalSms: false,
+        consentMarketingSms: false,
+        consentVoiceAiCall: false,
+        submittedAt: nowIso,
+      },
+      "lead-signup/verify"
+    );
+    if (
+      deckWebhook?.ok &&
+      deckWebhook.data &&
+      typeof deckWebhook.data.materialsTid === "string"
+    ) {
+      materialsTid = deckWebhook.data.materialsTid;
+    }
+  } else {
+    await forwardLeadWebhook({
+      webhookEnv: {
+        url: process.env.INVESTMENT_INTEREST_WEBHOOK_URL,
+        secret: process.env.INVESTMENT_INTEREST_WEBHOOK_SECRET,
+      },
+      payload: {
+        type: "investment_interest",
+        source: `${intent}:${source}`,
+        intent,
+        workosUserId: userId,
+        firstName: updatedUser.firstName || firstName,
+        lastName: updatedUser.lastName || lastName,
+        email: updatedUser.email || email,
+        phone,
+        investmentRange,
+        investmentTimeline,
+        primaryGoal,
+        socialPlatform,
+        socialHandle,
+        signupMethod: "password_email_verification",
+        consentTransactionalSms: smsEligible ? Boolean(consentTransactionalSms) : false,
+        consentMarketingSms: smsEligible ? Boolean(consentMarketingSms) : false,
+        consentVoiceAiCall: smsEligible ? Boolean(consentVoiceAiCall) : false,
+        consentEmailPrivacy: true,
+        consentMarketingEmail: Boolean(consentMarketingEmail),
+        submittedAt: nowIso,
+      },
+      logTag: "lead-signup/verify",
+    });
+  }
 
   return NextResponse.json({
     ok: true,
@@ -269,5 +305,6 @@ export async function POST(request) {
     firstName: updatedUser.firstName || firstName,
     lastName: updatedUser.lastName || lastName,
     email: updatedUser.email || email,
+    ...(materialsTid ? { materialsTid } : {}),
   });
 }

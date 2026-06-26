@@ -1,8 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
-    // Browsers default to /favicon.ico; serve the same mark as `app/icon.svg`.
-    return [{ source: "/favicon.ico", destination: "/icon.svg" }];
+    return [
+      { source: "/favicon.ico", destination: "/icon.svg" },
+      { source: "/incomeopportunity", destination: "/book/df-income" },
+      { source: "/incomeopportunity/how", destination: "/book/df-income/how-it-works" },
+      {
+        source: "/incomeopportunity/book",
+        destination: "/book/investor-call?bookingSource=lp_df_income_booking",
+      },
+    ];
   },
   async redirects() {
     return [

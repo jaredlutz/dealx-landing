@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "crypto";
 import { getWorkOS, withAuth } from "@workos-inc/authkit-nextjs";
 import {
   emailVerificationRequiredFromError,
+  forwardDeckSignupWebhook,
   forwardLeadWebhook,
   persistUserMetadata,
   syncAuthkitSession,
@@ -11,14 +13,13 @@ import { isPasswordStrong } from "@/lib/password-strength";
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED_INTENTS = new Set(["ira-download", "income-investments"]);
+const ALLOWED_INTENTS = new Set(["ira-download", "income-investments", "df-2026-deck"]);
 
 const ALLOWED_RANGES = new Set([
   "under_100k",
   "100k_250k",
   "250k_1m",
   "1m_plus",
-  "prefer_not",
 ]);
 
 const ALLOWED_SOCIAL_PLATFORMS = new Set([
@@ -54,6 +55,17 @@ function isValidEmail(v) {
 
 function digitsOnly(s) {
   return String(s || "").replace(/\D/g, "");
+}
+
+function generateServerPassword() {
+  return randomBytes(24).toString("base64url");
+}
+
+function deckSignupMethodFromBody(body, hasSession) {
+  if (hasSession) return "oauth_or_existing";
+  const raw = typeof body.signupMethod === "string" ? body.signupMethod.trim() : "";
+  if (raw === "email_otp" || raw === "sms_otp") return raw;
+  return "email_otp";
 }
 
 /**
@@ -93,6 +105,7 @@ export async function POST(request) {
     );
   }
   const isIncomeInvestments = intent === "income-investments";
+  const isDeckSignup = intent === "df-2026-deck";
 
   const source = isNonEmptyString(body.source) ? body.source.trim().slice(0, 120) : "modal";
 
@@ -111,6 +124,7 @@ export async function POST(request) {
     consentMarketingEmail,
     consentTransactionalSms,
     consentMarketingSms,
+    consentVoiceAiCall,
   } = body;
 
   if (consentEmailPrivacy !== true) {
@@ -148,6 +162,19 @@ export async function POST(request) {
     }
   }
 
+  /** @type {string | null} */ let deckPhone = null;
+  if (isDeckSignup && isNonEmptyString(rawPhone)) {
+    const trimmedPhone = rawPhone.trim().slice(0, 40);
+    const phoneDigits = digitsOnly(trimmedPhone);
+    if (phoneDigits.length > 0 && phoneDigits.length < 10) {
+      return NextResponse.json(
+        { ok: false, message: "Enter a complete phone number (10+ digits) or leave it blank." },
+        { status: 400 }
+      );
+    }
+    deckPhone = phoneDigits.length >= 10 ? trimmedPhone : null;
+  }
+
   /** @type {Awaited<ReturnType<typeof withAuth>> | null} */
   let auth;
   try {
@@ -181,6 +208,8 @@ export async function POST(request) {
     lastName = sessionUser.lastName || "";
     email = sessionUser.email;
   } else {
+    const deckSignupMethod = isDeckSignup ? deckSignupMethodFromBody(body, false) : null;
+
     if (!isNonEmptyString(rawFirstName)) {
       return NextResponse.json({ ok: false, message: "First name is required." }, { status: 400 });
     }
@@ -190,40 +219,52 @@ export async function POST(request) {
     if (!isValidEmail(rawEmail)) {
       return NextResponse.json({ ok: false, message: "Enter a valid email address." }, { status: 400 });
     }
-    if (!isNonEmptyString(password) || !isPasswordStrong(password)) {
-      return NextResponse.json(
-        { ok: false, message: "Choose a stronger password (10+ chars, mixed character types, avoid common words)." },
-        { status: 400 }
-      );
-    }
-    const normalizedPlatform = typeof rawSocialPlatform === "string"
-      ? rawSocialPlatform.trim().toLowerCase()
-      : "";
-    if (!ALLOWED_SOCIAL_PLATFORMS.has(normalizedPlatform)) {
-      return NextResponse.json(
-        { ok: false, message: "Select where we can find you online." },
-        { status: 400 }
-      );
-    }
-    if (!isNonEmptyString(rawSocialHandle)) {
-      return NextResponse.json(
-        { ok: false, message: "Enter your handle or profile URL." },
-        { status: 400 }
-      );
+
+    if (isDeckSignup) {
+      if (deckSignupMethod === "sms_otp") {
+        return NextResponse.json(
+          { ok: false, message: "Text verification is not available yet. Use email or sign in with Google or LinkedIn." },
+          { status: 501 }
+        );
+      }
+    } else {
+      if (!isNonEmptyString(password) || !isPasswordStrong(password)) {
+        return NextResponse.json(
+          { ok: false, message: "Choose a stronger password (10+ chars, mixed character types, avoid common words)." },
+          { status: 400 }
+        );
+      }
+      const normalizedPlatform = typeof rawSocialPlatform === "string"
+        ? rawSocialPlatform.trim().toLowerCase()
+        : "";
+      if (!ALLOWED_SOCIAL_PLATFORMS.has(normalizedPlatform)) {
+        return NextResponse.json(
+          { ok: false, message: "Select where we can find you online." },
+          { status: 400 }
+        );
+      }
+      if (!isNonEmptyString(rawSocialHandle)) {
+        return NextResponse.json(
+          { ok: false, message: "Enter your handle or profile URL." },
+          { status: 400 }
+        );
+      }
+      socialPlatform = normalizedPlatform;
+      socialHandle = rawSocialHandle.trim().slice(0, 200);
     }
 
     firstName = rawFirstName.trim();
     lastName = rawLastName.trim();
     email = rawEmail.trim().toLowerCase();
-    socialPlatform = normalizedPlatform;
-    socialHandle = rawSocialHandle.trim().slice(0, 200);
+
+    const effectivePassword = isDeckSignup ? generateServerPassword() : password;
 
     /** @type {{ id: string }} */
     let createdUser;
     try {
       createdUser = await getWorkOS().userManagement.createUser({
         email,
-        password,
+        password: effectivePassword,
         firstName,
         lastName,
         emailVerified: false,
@@ -241,7 +282,7 @@ export async function POST(request) {
       authResponse = await getWorkOS().userManagement.authenticateWithPassword({
         clientId,
         email,
-        password,
+        password: effectivePassword,
       });
     } catch (e) {
       const verification = emailVerificationRequiredFromError(e);
@@ -267,6 +308,14 @@ export async function POST(request) {
     firstName = authResponse.user.firstName || firstName;
     lastName = authResponse.user.lastName || lastName;
     email = authResponse.user.email;
+
+    if (!isDeckSignup) {
+      const normalizedPlatform = typeof rawSocialPlatform === "string"
+        ? rawSocialPlatform.trim().toLowerCase()
+        : "";
+      socialPlatform = normalizedPlatform;
+      socialHandle = rawSocialHandle.trim().slice(0, 200);
+    }
   }
 
   const nowIso = new Date().toISOString();
@@ -285,7 +334,7 @@ export async function POST(request) {
         insightsSocialHandle: socialHandle,
         investmentTimeline,
         primaryGoal,
-        phone,
+        phone: isDeckSignup ? deckPhone : phone,
       },
     });
   } catch (e) {
@@ -312,34 +361,70 @@ export async function POST(request) {
   }
 
   const smsEligible = isIncomeInvestments && Boolean(phone);
-  await forwardLeadWebhook({
-    webhookEnv: {
-      url: process.env.INVESTMENT_INTEREST_WEBHOOK_URL,
-      secret: process.env.INVESTMENT_INTEREST_WEBHOOK_SECRET,
-    },
-    payload: {
-      type: "investment_interest",
-      source: `${intent}:${source}`,
-      intent,
-      workosUserId: userId,
-      firstName: updatedUser.firstName || firstName,
-      lastName: updatedUser.lastName || lastName,
-      email: updatedUser.email || email,
-      phone,
-      investmentRange,
-      investmentTimeline,
-      primaryGoal,
-      socialPlatform,
-      socialHandle,
-      signupMethod: authResponse ? "password" : "linkedin_or_existing",
-      consentTransactionalSms: smsEligible ? Boolean(consentTransactionalSms) : false,
-      consentMarketingSms: smsEligible ? Boolean(consentMarketingSms) : false,
-      consentEmailPrivacy: true,
-      consentMarketingEmail: Boolean(consentMarketingEmail),
-      submittedAt: nowIso,
-    },
-    logTag: "lead-signup",
-  });
+  /** @type {string | null} */ let materialsTid = null;
+
+  if (isDeckSignup) {
+    const deckSignupMethod =
+      sessionUser && !authResponse ? "oauth_or_existing" : authResponse ? "email_otp" : "oauth_or_existing";
+    const deckWebhook = await forwardDeckSignupWebhook(
+      {
+        source,
+        firstName: updatedUser.firstName || firstName,
+        lastName: updatedUser.lastName || lastName,
+        email: updatedUser.email || email,
+        phone: deckPhone || null,
+        investmentRange,
+        workosUserId: userId,
+        signupMethod: deckSignupMethod,
+        socialPlatform,
+        socialHandle,
+        consentEmailPrivacy: true,
+        consentMarketingEmail: Boolean(consentMarketingEmail),
+        consentTransactionalSms: false,
+        consentMarketingSms: false,
+        consentVoiceAiCall: false,
+        submittedAt: nowIso,
+      },
+      "lead-signup"
+    );
+    if (
+      deckWebhook?.ok &&
+      deckWebhook.data &&
+      typeof deckWebhook.data.materialsTid === "string"
+    ) {
+      materialsTid = deckWebhook.data.materialsTid;
+    }
+  } else {
+    await forwardLeadWebhook({
+      webhookEnv: {
+        url: process.env.INVESTMENT_INTEREST_WEBHOOK_URL,
+        secret: process.env.INVESTMENT_INTEREST_WEBHOOK_SECRET,
+      },
+      payload: {
+        type: "investment_interest",
+        source: `${intent}:${source}`,
+        intent,
+        workosUserId: userId,
+        firstName: updatedUser.firstName || firstName,
+        lastName: updatedUser.lastName || lastName,
+        email: updatedUser.email || email,
+        phone,
+        investmentRange,
+        investmentTimeline,
+        primaryGoal,
+        socialPlatform,
+        socialHandle,
+        signupMethod: authResponse ? "password" : "linkedin_or_existing",
+        consentTransactionalSms: smsEligible ? Boolean(consentTransactionalSms) : false,
+        consentMarketingSms: smsEligible ? Boolean(consentMarketingSms) : false,
+        consentVoiceAiCall: smsEligible ? Boolean(consentVoiceAiCall) : false,
+        consentEmailPrivacy: true,
+        consentMarketingEmail: Boolean(consentMarketingEmail),
+        submittedAt: nowIso,
+      },
+      logTag: "lead-signup",
+    });
+  }
 
   return NextResponse.json({
     ok: true,
@@ -347,5 +432,6 @@ export async function POST(request) {
     firstName: updatedUser.firstName || firstName,
     lastName: updatedUser.lastName || lastName,
     email: updatedUser.email || email,
+    ...(materialsTid ? { materialsTid } : {}),
   });
 }

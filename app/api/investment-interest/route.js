@@ -34,6 +34,7 @@ export async function POST(request) {
     consentMarketingSms,
     consentEmailPrivacy,
     consentMarketingEmail,
+    consentVoiceAiCall,
   } = body;
 
   if (consentEmailPrivacy !== true) {
@@ -79,6 +80,7 @@ export async function POST(request) {
     consentMarketingSms: Boolean(consentMarketingSms),
     consentEmailPrivacy: true,
     consentMarketingEmail: Boolean(consentMarketingEmail),
+    consentVoiceAiCall: Boolean(consentVoiceAiCall),
     submittedAt: new Date().toISOString(),
   };
 

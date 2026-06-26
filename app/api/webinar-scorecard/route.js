@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { postJsonWebhook } from "@/lib/forward-webhook";
+import { DF_WEBSITE_SOURCE } from "@/lib/site-source";
 import {
   WEBINAR_SCORECARD_FLOW,
   WEBINAR_SCORECARD_QUESTIONNAIRE_SOURCE,
@@ -96,8 +97,8 @@ export async function POST(request) {
       ? body.eventSlug.trim().slice(0, 120)
       : null;
   const source = eventSlug
-    ? `fixed-note-lp:live-event:${eventSlug}`
-    : "fixed-note-lp:webinar-registration";
+    ? `${DF_WEBSITE_SOURCE}:live-event:${eventSlug}`
+    : `${DF_WEBSITE_SOURCE}:webinar-registration`;
 
   const payload = {
     flow: WEBINAR_SCORECARD_FLOW,

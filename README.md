@@ -1,6 +1,6 @@
-# DiversyFund Corporate Site
+# DF-Website
 
-diversyfund.com homepage rebuild. Built with Next.js, Neon Postgres, and WorkOS AuthKit.
+DiversyFund corporate marketing site (diversyfund.com). Built with Next.js, Neon Postgres, and WorkOS AuthKit.
 
 ## Stack
 
@@ -49,7 +49,7 @@ bun run dev
 
 ## Deploy to Vercel
 
-1. Push this repo to GitHub (e.g. `your-org/fixed-note-lp`)
+1. Push this repo to GitHub (e.g. `your-org/df-website`)
 2. Go to [vercel.com](https://vercel.com) → Import Project
 3. Select the repo and deploy (zero config required)
 

@@ -1,0 +1,10 @@
+html.df2026-fixed-income-lp,
+html.df2026-fixed-income-lp body {
+	background: #f9fafb;
+	color: #111827;
+	scroll-behavior: smooth;
+}
+
+html.df2026-fixed-income-lp body {
+	min-height: 100vh;
+}

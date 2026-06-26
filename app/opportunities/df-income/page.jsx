@@ -5,7 +5,7 @@ import InvestCtaButton from "@/components/investment/InvestCtaButton";
 import OfferingDeckCarousel from "@/components/opportunities/OfferingDeckCarousel";
 import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
-import { DF_INCOME_DECK_SLIDES, getDfIncomeOfferingForPage } from "@/lib/df-income";
+import { DF_INCOME_DECK_SLIDES, DF_INCOME_PRODUCT_DECK_PDF, getDfIncomeOfferingForPage } from "@/lib/df-income";
 import {
   MARKETING_PORTAL_DF_INCOME_OFFERING_URL,
   marketingPortalSignUpUrl,
@@ -106,16 +106,17 @@ export default async function DfIncomePage() {
                 View Offering &amp; Verify Eligibility
                 <ExternalLink className="h-4 w-4 shrink-0" aria-hidden />
               </a>
-              <Link
-                href="/documents"
+              <a
+                href={DF_INCOME_PRODUCT_DECK_PDF.href}
+                download={DF_INCOME_PRODUCT_DECK_PDF.downloadFilename}
                 className={cn(
                   "inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl border-2 border-border bg-background px-5 py-3 text-sm font-semibold transition sm:flex-initial sm:min-w-[240px]",
                   "hover:border-diversy-primary/35 hover:bg-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-diversy-primary/40"
                 )}
               >
                 <Download className="h-4 w-4 shrink-0 text-diversy-primary" aria-hidden />
-                Download Investor Summary
-              </Link>
+                Download Investment Deck
+              </a>
             </div>
             <p className={cn("mt-6 max-w-3xl text-xs leading-relaxed sm:text-sm", brand.subtle)}>
               Available to accredited investors under Regulation D, Rule 506(c).

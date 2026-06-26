@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { postJsonWebhook } from "@/lib/forward-webhook";
+import { DF_WEBSITE_SOURCE } from "@/lib/site-source";
 
 function isNonEmptyString(v) {
   return typeof v === "string" && v.trim().length > 0;
@@ -49,6 +50,7 @@ export async function POST(request) {
     consentTransactionalSms,
     consentEmailPrivacy,
     consentMarketingEmail,
+    consentVoiceAiCall,
     utm_campaign: utmCampaign,
     utm_source: utmSource,
     utm_medium: utmMedium,
@@ -103,7 +105,7 @@ export async function POST(request) {
 
   const payload = {
     type: "premier_seat_request",
-    source: "fixed-note-lp",
+    source: DF_WEBSITE_SOURCE,
     intakeVariant: variant,
     fullName: fullName.trim(),
     firstName,
@@ -115,6 +117,7 @@ export async function POST(request) {
     consentTransactionalSms: Boolean(consentTransactionalSms),
     consentEmailPrivacy: true,
     consentMarketingEmail: Boolean(consentMarketingEmail),
+    consentVoiceAiCall: Boolean(consentVoiceAiCall),
     utm_campaign: uc,
     utm_source: us,
     utm_medium: um,

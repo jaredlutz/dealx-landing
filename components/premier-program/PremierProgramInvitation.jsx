@@ -13,6 +13,7 @@ import {
   Target,
 } from "lucide-react";
 import EmailConsentControls from "@/components/forms/EmailConsentControls";
+import VoiceAiCallConsentControl from "@/components/forms/VoiceAiCallConsentControl";
 import Button from "@/components/ui/Button";
 import Container from "@/components/ui/Container";
 import {
@@ -92,6 +93,7 @@ export default function PremierProgramInvitation({ crmBookingCall = "" }) {
   const [consentTransactionalSms, setConsentTransactionalSms] = useState(false);
   const [consentEmailPrivacy, setConsentEmailPrivacy] = useState(false);
   const [consentMarketingEmail, setConsentMarketingEmail] = useState(false);
+  const [consentVoiceAiCall, setConsentVoiceAiCall] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [doneAudience, setDoneAudience] = useState(null);
@@ -134,6 +136,7 @@ export default function PremierProgramInvitation({ crmBookingCall = "" }) {
             consentTransactionalSms,
             consentEmailPrivacy,
             consentMarketingEmail,
+            consentVoiceAiCall,
             intakeVariant: "premier_program",
             utm_campaign: utm.utm_campaign || undefined,
             utm_source: utm.utm_source || undefined,
@@ -161,6 +164,7 @@ export default function PremierProgramInvitation({ crmBookingCall = "" }) {
       consentTransactionalSms,
       consentEmailPrivacy,
       consentMarketingEmail,
+      consentVoiceAiCall,
       utm,
     ]
   );
@@ -584,6 +588,10 @@ export default function PremierProgramInvitation({ crmBookingCall = "" }) {
                 />
                 <span>I agree to receive transactional messages at this number regarding my request.</span>
               </label>
+              <VoiceAiCallConsentControl
+                checked={consentVoiceAiCall}
+                onChange={setConsentVoiceAiCall}
+              />
 
               {error ? <p className="text-center text-sm font-medium text-red-500">{error}</p> : null}
 
