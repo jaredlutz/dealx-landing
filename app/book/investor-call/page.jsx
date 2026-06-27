@@ -3,6 +3,8 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Calendar as CalendarIcon, ExternalLink, Loader2 } from "lucide-react";
+import BookingSlotPicker from "@/components/book/BookingSlotPicker";
+import BookingStepIndicator from "@/components/book/BookingStepIndicator";
 import PublicBookingPageShell from "@/components/book/PublicBookingPageShell";
 import InvestorCallContactAuth from "@/components/book/InvestorCallContactAuth";
 import {
@@ -18,10 +20,8 @@ import {
 } from "@/components/book/bookingUi";
 import EmailConsentControls from "@/components/forms/EmailConsentControls";
 import VoiceAiCallConsentControl from "@/components/forms/VoiceAiCallConsentControl";
-import { SMS_CONSENT_MARKETING } from "@/lib/investment-interest-consent";
+import { BOOKING_BUSINESS_DAYS } from "@/lib/book/bookingConstants";
 import {
-  INVESTOR_CALL_BEFORE_CALL_BLURB,
-  INVESTOR_CALL_BOOKING_DOWNLOADS,
   INVESTOR_CALL_PAGE_DESCRIPTION,
   INVESTOR_CALL_PAGE_TITLE,
   INVESTOR_CALL_REP_DISPLAY_NAME,
@@ -30,19 +30,20 @@ import { parseLpInvestorCallBookingSource } from "@/lib/book/parseLpInvestorCall
 import { PUBLIC_BOOKING_CARD_CLASS } from "@/lib/book/publicBookingResourceLinks";
 import {
   dateKeyInTimeZone,
-  defaultBookingTimeZone,
+  formatDisplayTimeZoneShortName,
   formatSlotDateLabel,
   formatSlotTimeLabel,
-  groupSlotsByLocalDate,
 } from "@/lib/book/slotDisplay";
+import {
+  formatUsPhoneDisplay,
+  isValidUsMobileInput,
+  normalizeUsPhoneForApi,
+} from "@/lib/book/usPhoneInput";
 import { metaTrackStandard } from "@/lib/analytics/metaPixel";
+import { SMS_CONSENT_MARKETING } from "@/lib/investment-interest-consent";
 import { brand, cn } from "@/lib/theme";
 
 const DEFAULT_FALLBACK = "https://links.diversyfund.com/widget/booking/gikK2iGjegkeED65GOUq";
-
-function digitsOnly(s) {
-  return String(s || "").replace(/\D/g, "");
-}
 
 function BookInvestorCallContent() {
   const pathname = usePathname();
@@ -54,10 +55,10 @@ function BookInvestorCallContent() {
   const tid = searchParams.get("tid") ?? "";
   const slug = searchParams.get("slug") ?? "";
   const bookingSource = parseLpInvestorCallBookingSource(searchParams.get("bookingSource"));
-  const fallbackUrl = DEFAULT_FALLBACK;
 
   const [slots, setSlots] = useState([]);
-  const [bookingTz, setBookingTz] = useState(defaultBookingTimeZone());
+  const [bookingTz, setBookingTz] = useState("America/Los_Angeles");
+  const [displayTz, setDisplayTz] = useState("America/Los_Angeles");
   const [loadingSlots, setLoadingSlots] = useState(true);
   const [useFallback, setUseFallback] = useState(false);
   const [selectedDateKey, setSelectedDateKey] = useState(null);
@@ -80,8 +81,7 @@ function BookInvestorCallContent() {
   const scheduleLockRef = useRef(false);
   const idempotencyKeyRef = useRef(null);
 
-  const phoneDigits = digitsOnly(phone);
-  const showPhoneConsents = phoneDigits.length >= 10;
+  const showPhoneConsents = isValidUsMobileInput(phone);
 
   const fetchSlots = useCallback(async () => {
     setLoadingSlots(true);
@@ -89,7 +89,7 @@ function BookInvestorCallContent() {
     setUseFallback(false);
     try {
       const qs = new URLSearchParams({
-        days: "14",
+        businessDays: String(BOOKING_BUSINESS_DAYS),
         bookingSource,
       });
       const res = await fetch(`/api/crm/book/investor-call/availability?${qs.toString()}`);
@@ -137,7 +137,9 @@ function BookInvestorCallContent() {
     if (prefillContact) {
       setName([prefillContact.firstName, prefillContact.lastName].filter(Boolean).join(" "));
       setEmail(prefillContact.email ?? "");
-      setPhone(prefillContact.phoneE164 ?? "");
+      if (prefillContact.phoneE164) {
+        setPhone(formatUsPhoneDisplay(prefillContact.phoneE164));
+      }
     }
   }, [prefillContact]);
 
@@ -161,7 +163,7 @@ function BookInvestorCallContent() {
   }, []);
 
   const handleSchedule = async () => {
-    if (!selectedSlot || !name.trim() || !email.trim() || !phone.trim()) return;
+    if (!selectedSlot || !name.trim() || !email.trim() || !isValidUsMobileInput(phone)) return;
     if (!consentEmailPrivacy) {
       setError("Please consent to email communications before confirming.");
       return;
@@ -176,6 +178,7 @@ function BookInvestorCallContent() {
     }
     setScheduling(true);
     setError(null);
+    const phoneNormalized = normalizeUsPhoneForApi(phone);
     try {
       const res = await fetch("/api/crm/book/investor-call/schedule", {
         method: "POST",
@@ -185,7 +188,7 @@ function BookInvestorCallContent() {
           endIso: selectedSlot.end,
           name: name.trim(),
           email: email.trim(),
-          phoneE164: phone.trim(),
+          phoneE164: phoneNormalized ? `+1${phoneNormalized}` : phone.trim(),
           consentEmail: true,
           consentSms: consentMarketingSms,
           consentVoiceAiCall,
@@ -198,6 +201,7 @@ function BookInvestorCallContent() {
       if (res.status === 409) {
         setError(data.error ?? "That time was just taken. Please pick another slot.");
         setSelectedSlot(null);
+        scheduleLockRef.current = false;
         await fetchSlots();
         return;
       }
@@ -224,30 +228,15 @@ function BookInvestorCallContent() {
     }
   };
 
-  const { sortedDateKeys, byDate } = useMemo(() => groupSlotsByLocalDate(slots, bookingTz), [slots, bookingTz]);
-  const dateKeysSig = sortedDateKeys.join("|");
-
-  useEffect(() => {
-    setSelectedDateKey((prev) => (prev && sortedDateKeys.includes(prev) ? prev : null));
-  }, [dateKeysSig, sortedDateKeys]);
-
-  const activeDateKey =
-    sortedDateKeys.length === 0
-      ? null
-      : selectedDateKey && sortedDateKeys.includes(selectedDateKey)
-        ? selectedDateKey
-        : sortedDateKeys[0];
-
-  const tzHint = bookingTz === "America/Los_Angeles" ? "Pacific Time" : bookingTz.replace(/_/g, " ");
-  const slotsForSelectedDay = activeDateKey && byDate[activeDateKey] ? byDate[activeDateKey] : [];
-
   const shellProps = {
     eyebrow: "Accredited investors · DiversyFund",
     title: INVESTOR_CALL_PAGE_TITLE,
     description: INVESTOR_CALL_PAGE_DESCRIPTION,
-    beforeCallBlurb: INVESTOR_CALL_BEFORE_CALL_BLURB,
-    downloads: INVESTOR_CALL_BOOKING_DOWNLOADS,
+    showBeforeCallPanel: false,
   };
+
+  const currentStep = confirmation ? 3 : selectedSlot ? 2 : 1;
+  const effectiveDisplayTz = displayTz || bookingTz;
 
   if (useFallback) {
     return (
@@ -261,7 +250,7 @@ function BookInvestorCallContent() {
           </BookingCardHeader>
           <BookingCardContent>
             <a
-              href={fallbackUrl}
+              href={DEFAULT_FALLBACK}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#005EE0] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0066F5]"
@@ -280,6 +269,7 @@ function BookInvestorCallContent() {
       <PublicBookingPageShell {...shellProps}>
         <BookingCard className={cn("max-w-xl")}>
           <BookingCardHeader>
+            <BookingStepIndicator currentStep={3} className="mb-4" />
             <BookingCardTitle>You&apos;re all set</BookingCardTitle>
             <BookingCardDescription>
               {confirmation.joinUrl
@@ -321,77 +311,38 @@ function BookInvestorCallContent() {
     <PublicBookingPageShell {...shellProps}>
       <BookingCard className={cn("max-w-2xl")}>
         <BookingCardHeader>
+          <BookingStepIndicator currentStep={currentStep} className="mb-4" />
           <BookingCardTitle>Pick a time</BookingCardTitle>
           <BookingCardDescription>
-            Choose a day, then a start time. 30-minute slots · Weekdays · {tzHint} · {INVESTOR_CALL_REP_DISPLAY_NAME}
+            30-minute slots · Weekdays · next {BOOKING_BUSINESS_DAYS} business days ·{" "}
+            {INVESTOR_CALL_REP_DISPLAY_NAME}
           </BookingCardDescription>
         </BookingCardHeader>
         <BookingCardContent>
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          {loadingSlots ? (
-            <div className="space-y-3">
-              <BookingSkeleton className="h-10 w-full" />
-              <BookingSkeleton className="h-40 w-full" />
-            </div>
-          ) : !selectedSlot ? (
-            <div className="space-y-6">
-              {sortedDateKeys.length === 0 ? (
-                <>
-                  <p className="text-sm text-zinc-500">No available slots in the next 14 days.</p>
-                  <a
-                    href={fallbackUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium hover:bg-zinc-50"
-                  >
-                    <ExternalLink className="size-4" />
-                    Try our scheduling link
-                  </a>
-                </>
-              ) : (
-                <>
-                  <p className="text-xs text-zinc-500">Dates with openings are selectable. All times are {tzHint}.</p>
-                  <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-                    <div className="min-w-0 flex-1 space-y-2">
-                      <p className="text-sm font-medium text-zinc-900">Select a date</p>
-                      <div className="flex flex-wrap gap-2">
-                        {sortedDateKeys.map((key) => (
-                          <BookingButton
-                            key={key}
-                            variant={activeDateKey === key ? "primary" : "outline"}
-                            size="sm"
-                            onClick={() => {
-                              setSelectedDateKey(key);
-                              setSelectedSlot(null);
-                            }}
-                          >
-                            {formatSlotDateLabel(byDate[key][0].start, bookingTz)}
-                          </BookingButton>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="min-w-0 flex-1 space-y-3">
-                      <p className="text-sm font-medium text-zinc-900">
-                        {slotsForSelectedDay[0]
-                          ? formatSlotDateLabel(slotsForSelectedDay[0].start, bookingTz)
-                          : "Select another day"}
-                      </p>
-                      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                        {slotsForSelectedDay.map((slot) => (
-                          <BookingButton
-                            key={slot.start}
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedSlot(slot)}
-                          >
-                            {formatSlotTimeLabel(slot.start, bookingTz)}
-                          </BookingButton>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </>
+          {!selectedSlot ? (
+            <div className="space-y-4">
+              <BookingSlotPicker
+                slots={slots}
+                loading={loadingSlots}
+                bookingTimeZone={bookingTz}
+                selectedDateKey={selectedDateKey}
+                onSelectedDateKeyChange={setSelectedDateKey}
+                selectedSlot={selectedSlot}
+                onSelectSlot={setSelectedSlot}
+                onDisplayTimeZoneChange={setDisplayTz}
+              />
+              {!loadingSlots && slots.length === 0 && (
+                <a
+                  href={DEFAULT_FALLBACK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium hover:bg-zinc-50"
+                >
+                  <ExternalLink className="size-4" />
+                  Try our scheduling link
+                </a>
               )}
             </div>
           ) : (
@@ -399,10 +350,11 @@ function BookInvestorCallContent() {
               <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
                 <p className="text-sm text-zinc-600">
                   <span className="font-medium text-zinc-900">
-                    {formatSlotDateLabel(selectedSlot.start, bookingTz)}
+                    {formatSlotDateLabel(selectedSlot.start, effectiveDisplayTz)}
                   </span>
                   {" · "}
-                  {formatSlotTimeLabel(selectedSlot.start, bookingTz)} {tzHint}
+                  {formatSlotTimeLabel(selectedSlot.start, effectiveDisplayTz)} (
+                  {formatDisplayTimeZoneShortName(effectiveDisplayTz)})
                 </p>
                 <BookingButton
                   variant="ghost"
@@ -410,7 +362,7 @@ function BookInvestorCallContent() {
                   className="mt-2 -ml-2 h-8 px-2"
                   onClick={() => {
                     setSelectedSlot(null);
-                    setSelectedDateKey(dateKeyInTimeZone(selectedSlot.start, bookingTz));
+                    setSelectedDateKey(dateKeyInTimeZone(selectedSlot.start, effectiveDisplayTz));
                   }}
                 >
                   Change time
@@ -424,27 +376,27 @@ function BookInvestorCallContent() {
                 onUseManual={() => setManualContact(true)}
               />
               {(manualContact || !sessionEmail) && (
-              <div className="space-y-3">
-                <div>
-                  <BookingLabel htmlFor="inv-book-name">Name</BookingLabel>
-                  <BookingInput
-                    id="inv-book-name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your name"
-                  />
+                <div className="space-y-3">
+                  <div>
+                    <BookingLabel htmlFor="inv-book-name">Name</BookingLabel>
+                    <BookingInput
+                      id="inv-book-name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div>
+                    <BookingLabel htmlFor="inv-book-email">Email</BookingLabel>
+                    <BookingInput
+                      id="inv-book-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <BookingLabel htmlFor="inv-book-email">Email</BookingLabel>
-                  <BookingInput
-                    id="inv-book-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                  />
-                </div>
-              </div>
               )}
               <div className="space-y-3">
                 <div>
@@ -454,12 +406,14 @@ function BookInvestorCallContent() {
                   <BookingInput
                     id="inv-book-phone"
                     type="tel"
+                    inputMode="numeric"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Phone number"
+                    onChange={(e) => setPhone(formatUsPhoneDisplay(e.target.value))}
+                    placeholder="949 245 9055"
+                    autoComplete="tel-national"
                   />
                   <p className="mt-2 text-xs text-zinc-500">
-                    We&apos;ll use this number for your scheduled call and related messages.
+                    U.S. mobile — 10 digits; we&apos;ll add +1 automatically.
                   </p>
                 </div>
                 <EmailConsentControls
@@ -469,7 +423,7 @@ function BookInvestorCallContent() {
                   onMarketingChange={setConsentMarketingEmail}
                 />
                 {showPhoneConsents && (
-                  <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-3">
+                  <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-4">
                     <label className="flex cursor-pointer gap-2.5">
                       <input
                         type="checkbox"
@@ -486,7 +440,13 @@ function BookInvestorCallContent() {
               <button
                 type="button"
                 onClick={handleSchedule}
-                disabled={scheduling || !name.trim() || !email.trim() || !phone.trim() || !consentEmailPrivacy}
+                disabled={
+                  scheduling ||
+                  !name.trim() ||
+                  !email.trim() ||
+                  !isValidUsMobileInput(phone) ||
+                  !consentEmailPrivacy
+                }
                 className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#005EE0] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0066F5] disabled:opacity-50"
               >
                 {scheduling ? (

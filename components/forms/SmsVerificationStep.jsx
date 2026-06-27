@@ -18,6 +18,7 @@ export default function SmsVerificationStep({
   onSubmit,
   onResend,
   onBack,
+  children,
 }) {
   const fieldId = useId();
   const inputRef = useRef(/** @type {HTMLInputElement | null} */ (null));
@@ -94,6 +95,13 @@ export default function SmsVerificationStep({
           6-digit code. Message &amp; data rates may apply.
         </p>
       </div>
+
+      <p className={cn("text-[11px] leading-relaxed", brand.subtle)}>
+        Code not showing up? Wait up to a minute, check spam filters on your phone, then tap
+        resend. If it still doesn&apos;t arrive, use the email or social tab instead.
+      </p>
+
+      {children}
 
       {error ? (
         <p

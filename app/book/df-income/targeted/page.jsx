@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { buildDfIncomeBookVariantPath } from "@/lib/book/dfIncomeBookVariants";
 
-/** Legacy path → canonical A/B variant URL. */
+/** Legacy path → canonical v/1 URL. */
 export default function DfIncomeTargetedLegacyRedirectPage() {
-  redirect(buildDfIncomeBookVariantPath("target"));
+  redirect(buildDfIncomeBookVariantPath("1"));
 }

@@ -7,7 +7,7 @@ import Df2026FixedIncomeLeadSignup from "./Df2026FixedIncomeLeadSignup";
 import Df2026FixedIncomeStickyCta from "./Df2026FixedIncomeStickyCta";
 import {
   DF_INCOME_OPPORTUNITY_BOOK_HREF,
-  DF_INCOME_OPPORTUNITY_HOW_HREF,
+  DF_INCOME_OPPORTUNITY_DECK_HREF,
 } from "@/lib/book/dfIncomeOpportunityUrls";
 import styles from "./df-2026-fixed-income.module.css";
 
@@ -31,11 +31,10 @@ function DiversyFundLogo({ className }) {
   );
 }
 
-function bookingCtaCopy(pageKey) {
-  const isBooking = pageKey === "book-df-income";
+function bookingCtaCopy() {
   return {
-    headerNav: isBooking ? "Book Appointment" : "Request the Deck",
-    floating: isBooking ? "Book Appointment" : "Request the Investor Deck",
+    headerNav: "Book a private call",
+    floating: "Book a private call",
   };
 }
 
@@ -43,7 +42,7 @@ export default function Df2026FixedIncomeLandingContent({
   pageKey = "book-df-income",
   leadSignupSource = "book-df-income",
 }) {
-  const { headerNav, floating } = bookingCtaCopy(pageKey);
+  const { headerNav, floating } = bookingCtaCopy();
 
   return (
     <div className={`marketing-light ${styles.page}`}>
@@ -57,7 +56,6 @@ export default function Df2026FixedIncomeLandingContent({
               <DiversyFundLogo />
               <div className={styles.navlinks}>
                 <a href="#classes">Share Classes</a>
-                <a href={DF_INCOME_OPPORTUNITY_HOW_HREF}>How It Works</a>
                 <a href="#track">Track Record</a>
               </div>
               <a href={DF_INCOME_OPPORTUNITY_BOOK_HREF} className={styles.pill}>
@@ -69,7 +67,6 @@ export default function Df2026FixedIncomeLandingContent({
             <div className={styles.wrap}>
               <nav className={styles.navMobile} aria-label="Page sections">
                 <a href="#classes">Share Classes</a>
-                <a href={DF_INCOME_OPPORTUNITY_HOW_HREF}>How It Works</a>
                 <a href="#track">Track Record</a>
               </nav>
             </div>
@@ -182,8 +179,8 @@ export default function Df2026FixedIncomeLandingContent({
               schedule according to your share class.
             </p>
           </div>
-          <a href={DF_INCOME_OPPORTUNITY_HOW_HREF} className={`${styles.btn} ${styles.btnGhost}`}>
-            See how it works →
+          <a href={DF_INCOME_OPPORTUNITY_DECK_HREF} className={`${styles.btn} ${styles.btnGhost}`}>
+            Request the investor deck →
           </a>
         </section>
 

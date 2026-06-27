@@ -35,7 +35,7 @@ export default function BookPageViewTracker() {
   const firedKeyRef = useRef(null);
 
   useEffect(() => {
-    if (!pathname?.startsWith("/book")) return;
+    if (!pathname?.startsWith("/book") && !pathname?.startsWith("/incomeopportunity")) return;
 
     const sessionId = getOrCreateBookPageSessionId();
     const fireKey = `${pathname}:${sessionId}:${tid ?? ""}:${cid ?? ""}`;

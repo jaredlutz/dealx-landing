@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import BookingSlotPicker from "@/components/book/BookingSlotPicker";
+import BookingStepIndicator from "@/components/book/BookingStepIndicator";
 import {
   BookingButton,
   BookingCard,
@@ -11,51 +13,30 @@ import {
   BookingCardTitle,
   BookingInput,
   BookingLabel,
-  BookingSelect,
-  BookingSkeleton,
   SCHEDULER_BTN_CLASS,
 } from "@/components/book/bookingUi";
+import { BOOKING_BUSINESS_DAYS } from "@/lib/book/bookingConstants";
 import { PUBLIC_BOOKING_CARD_CLASS } from "@/lib/book/publicBookingResourceLinks";
 import {
-  defaultBookingTimeZone,
+  formatDisplayTimeZoneShortName,
   formatSlotDateLabel,
   formatSlotTimeLabel,
-  groupSlotsByLocalDate,
 } from "@/lib/book/slotDisplay";
 import { cn } from "@/lib/theme";
-
-function formatDisplayTimeZoneLabel(timeZone) {
-  if (timeZone === "America/Los_Angeles") return "Pacific Time";
-  return timeZone.replace(/_/g, " ");
-}
-
-function formatDisplayTimeZoneShortName(timeZone) {
-  try {
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone,
-      timeZoneName: "short",
-    }).formatToParts(new Date());
-    return parts.find((part) => part.type === "timeZoneName")?.value ?? timeZone;
-  } catch {
-    return timeZone;
-  }
-}
 
 export default function PublicBookingScheduler({
   calendarIds,
   className,
   cardClassName,
   title = "Pick a time",
-  description = "Choose a day, then a start time. Availability is shown in your selected timezone.",
+  description = "Choose a day, then a start time. 30-minute weekday slots within the next five business days.",
   confirmLabel = "Confirm booking",
   onConfirmation,
   renderConfirmation,
 }) {
   const [slots, setSlots] = useState([]);
-  const [bookingTz, setBookingTz] = useState(defaultBookingTimeZone());
-  const [localTz, setLocalTz] = useState(null);
-  const [displayTz, setDisplayTz] = useState(defaultBookingTimeZone());
-  const [displayTzTouched, setDisplayTzTouched] = useState(false);
+  const [bookingTz, setBookingTz] = useState("America/Los_Angeles");
+  const [displayTz, setDisplayTz] = useState("America/Los_Angeles");
   const [selectedDateKey, setSelectedDateKey] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -75,7 +56,10 @@ export default function PublicBookingScheduler({
     setLoading(true);
     setError(null);
     try {
-      const params = new URLSearchParams({ calendars: calendarIds.join(","), days: "14" });
+      const params = new URLSearchParams({
+        calendars: calendarIds.join(","),
+        businessDays: String(BOOKING_BUSINESS_DAYS),
+      });
       const res = await fetch(`/api/crm/book/availability?${params}`);
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -97,20 +81,6 @@ export default function PublicBookingScheduler({
   useEffect(() => {
     fetchSlots();
   }, [fetchSlots]);
-
-  useEffect(() => {
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (tz?.trim()) setLocalTz(tz);
-    } catch {
-      /* keep default */
-    }
-  }, []);
-
-  useEffect(() => {
-    if (displayTzTouched) return;
-    setDisplayTz(localTz ?? bookingTz);
-  }, [bookingTz, localTz, displayTzTouched]);
 
   const handleSchedule = async () => {
     if (!selectedSlot || !name.trim() || !email.trim()) return;
@@ -142,12 +112,8 @@ export default function PublicBookingScheduler({
     }
   };
 
-  const effectiveDisplayTz = displayTz || localTz || bookingTz;
-  const { sortedDateKeys, byDate: slotsByDate } = groupSlotsByLocalDate(slots, effectiveDisplayTz);
-  const timeZoneOptions = Array.from(new Set([localTz, bookingTz, "America/Los_Angeles"].filter(Boolean)));
-  const effectiveSelectedDateKey =
-    selectedDateKey && slotsByDate[selectedDateKey] ? selectedDateKey : (sortedDateKeys[0] ?? null);
-  const selectedDateSlots = effectiveSelectedDateKey ? (slotsByDate[effectiveSelectedDateKey] ?? []) : [];
+  const effectiveDisplayTz = displayTz || bookingTz;
+  const currentStep = confirmation ? 3 : selectedSlot ? 2 : 1;
 
   if (calendarIds.length === 0) {
     return (
@@ -168,6 +134,7 @@ export default function PublicBookingScheduler({
     return (
       <BookingCard className={cn("max-w-xl", cardClassName, className)}>
         <BookingCardHeader>
+          <BookingStepIndicator currentStep={3} className="mb-4" />
           <BookingCardTitle>Confirmation</BookingCardTitle>
           <BookingCardDescription>Check your email for calendar details.</BookingCardDescription>
         </BookingCardHeader>
@@ -200,95 +167,24 @@ export default function PublicBookingScheduler({
   return (
     <BookingCard className={cn("max-w-2xl", cardClassName, className)} id="schedule">
       <BookingCardHeader>
+        <BookingStepIndicator currentStep={currentStep} className="mb-4" />
         <BookingCardTitle>{title}</BookingCardTitle>
         <BookingCardDescription>{description}</BookingCardDescription>
       </BookingCardHeader>
       <BookingCardContent>
-        <div className="rounded-md border border-zinc-200 bg-zinc-50/80 p-4">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-zinc-900">Time zone</p>
-            <p className="text-xs text-zinc-500">Availability is shown in your selected timezone.</p>
-          </div>
-          <div className="mt-3">
-            <BookingSelect
-              value={effectiveDisplayTz}
-              onChange={(e) => {
-                setDisplayTzTouched(true);
-                setDisplayTz(e.target.value);
-              }}
-              className="max-w-xs"
-            >
-              {timeZoneOptions.map((tz) => (
-                <option key={tz} value={tz}>
-                  {tz === localTz
-                    ? `Your local time (${formatDisplayTimeZoneShortName(tz)})`
-                    : `${formatDisplayTimeZoneLabel(tz)} (${formatDisplayTimeZoneShortName(tz)})`}
-                </option>
-              ))}
-            </BookingSelect>
-          </div>
-        </div>
-
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        {loading ? (
-          <div className="space-y-3">
-            <BookingSkeleton className="h-10 w-full" />
-            <BookingSkeleton className="h-40 w-full" />
-          </div>
-        ) : !selectedSlot ? (
-          <div className="space-y-4">
-            {sortedDateKeys.length === 0 ? (
-              <p className="text-sm text-zinc-500">No available slots in the next 14 days. Try again later.</p>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_1fr]">
-                <div className="rounded-lg border border-zinc-200 bg-zinc-50/50 p-4">
-                  <p className="mb-3 text-sm font-medium text-zinc-900">1) Select a date</p>
-                  <div className="flex flex-wrap gap-2">
-                    {sortedDateKeys.map((key) => (
-                      <BookingButton
-                        key={key}
-                        variant={effectiveSelectedDateKey === key ? "primary" : "outline"}
-                        size="sm"
-                        onClick={() => {
-                          setSelectedSlot(null);
-                          setSelectedDateKey(key);
-                        }}
-                      >
-                        {formatSlotDateLabel(slotsByDate[key][0].start, effectiveDisplayTz)}
-                      </BookingButton>
-                    ))}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-zinc-200 bg-white p-4">
-                  <p className="text-sm font-medium text-zinc-900">2) Select a time</p>
-                  <p className="mb-3 mt-1 text-sm text-zinc-500">
-                    {effectiveSelectedDateKey && selectedDateSlots[0]
-                      ? formatSlotDateLabel(selectedDateSlots[0].start, effectiveDisplayTz)
-                      : "Choose a date to view times"}
-                  </p>
-                  {selectedDateSlots.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                      {selectedDateSlots.map((slot) => (
-                        <BookingButton
-                          key={slot.start}
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setSelectedSlot(slot)}
-                        >
-                          {formatSlotTimeLabel(slot.start, effectiveDisplayTz)}
-                        </BookingButton>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="rounded-md border border-dashed border-zinc-200 p-6 text-center text-sm text-zinc-500">
-                      Select a date to continue.
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+        {!selectedSlot ? (
+          <BookingSlotPicker
+            slots={slots}
+            loading={loading}
+            bookingTimeZone={bookingTz}
+            selectedDateKey={selectedDateKey}
+            onSelectedDateKeyChange={setSelectedDateKey}
+            selectedSlot={selectedSlot}
+            onSelectSlot={setSelectedSlot}
+            onDisplayTimeZoneChange={setDisplayTz}
+          />
         ) : (
           <div className="space-y-4">
             <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">

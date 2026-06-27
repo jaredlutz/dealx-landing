@@ -36,3 +36,4 @@ next-env.d.ts
 
 # Large webinar assets (exceed GitHub limit)
 public/images/webinar/hero-video.mp4
+.env*

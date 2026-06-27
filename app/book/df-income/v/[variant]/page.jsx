@@ -2,6 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import DfIncomeTargetVariantRoute from "@/components/book/dfIncomeBookVariants/target/DfIncomeTargetVariantRoute";
 import {
   buildDfIncomeBookVariantPath,
+  DF_INCOME_CANONICAL_VARIANT,
+  isRetiredDfIncomeBookVariant,
   listDfIncomeBookVariantSlugs,
   resolveDfIncomeBookVariant,
 } from "@/lib/book/dfIncomeBookVariants";
@@ -24,16 +26,12 @@ export async function generateMetadata({ params }) {
 export default function DfIncomeBookVariantPage({ params }) {
   const normalized = String(params.variant ?? "").trim().toLowerCase();
 
-  if (normalized === "targeted") {
-    redirect(buildDfIncomeBookVariantPath("target"));
+  if (isRetiredDfIncomeBookVariant(normalized)) {
+    redirect(buildDfIncomeBookVariantPath(DF_INCOME_CANONICAL_VARIANT));
   }
 
   const config = resolveDfIncomeBookVariant(params.variant);
   if (!config) notFound();
 
-  if (config.slug === "target") {
-    return <DfIncomeTargetVariantRoute config={config} />;
-  }
-
-  notFound();
+  return <DfIncomeTargetVariantRoute config={config} />;
 }

@@ -11,11 +11,23 @@ import {
   buildOAuthDeckSignupBody,
   formatDeckSignupValidationError,
 } from "@/lib/book/dfIncomeDeckSignupPayload";
-import { deckFormInputClass, deckFormLabelClass } from "@/lib/book/deckFormStyles";
+import {
+  deckFormFieldGridClass,
+  deckFormInputClass,
+  deckFormLabelClass,
+} from "@/lib/book/deckFormStyles";
+import {
+  formatUsPhoneDisplay,
+  isValidUsMobileInput,
+  normalizeUsPhoneForApi,
+} from "@/lib/book/usPhoneInput";
 import {
   SMS_CONSENT_MARKETING,
   SMS_CONSENT_TRANSACTIONAL,
 } from "@/lib/investment-interest-consent";
+import {
+  DF_INCOME_OPPORTUNITY_BOOK_HREF,
+} from "@/lib/book/dfIncomeOpportunityUrls";
 import { brand, cn } from "@/lib/theme";
 
 const RANGE_OPTIONS = [
@@ -38,11 +50,11 @@ export default function Df2026DeckLeadSignupForm({
   source,
   submitLabel,
   onSuccess,
-  bookCallHref = "/incomeopportunity/book",
+  bookCallHref = DF_INCOME_OPPORTUNITY_BOOK_HREF,
 }) {
   const pathname = usePathname();
   const formId = useId();
-  const returnPath = pathname?.startsWith("/") ? pathname : "/book/df-income";
+  const returnPath = pathname?.startsWith("/") ? pathname : "/incomeopportunity/v/1";
 
   const [mode, setMode] = useState("loading");
   const [authTab, setAuthTab] = useState("social");
@@ -146,6 +158,8 @@ export default function Df2026DeckLeadSignupForm({
       case "sms_line_not_configured":
       case "sms_verification_disabled":
         return "Text verification is temporarily unavailable. Please use email or social sign-in.";
+      case "sms_send_failed":
+        return "We couldn't send the verification text. Check your mobile number or use email or social sign-in.";
       default:
         return "Something went wrong. Please try again.";
     }
@@ -179,9 +193,9 @@ export default function Df2026DeckLeadSignupForm({
         setError("Please enter your last name.");
         return;
       }
-      const phoneDigits = phone.replace(/\D/g, "");
-      if (phoneDigits.length < 10) {
-        setError("Please enter a valid phone number.");
+      const phoneDigits = normalizeUsPhoneForApi(phone);
+      if (!phoneDigits) {
+        setError("Please enter your 10-digit U.S. mobile number.");
         return;
       }
       if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
@@ -205,13 +219,15 @@ export default function Df2026DeckLeadSignupForm({
       }
     }
 
-    if (!investmentRange) {
-      setError("Please select an investment range.");
-      return;
-    }
-    if (!consentEmailPrivacy) {
-      setError("Please confirm the Privacy Policy acknowledgment to continue.");
-      return;
+    if (!(mode === "signup" && authTab === "text")) {
+      if (!investmentRange) {
+        setError("Please select an investment range.");
+        return;
+      }
+      if (!consentEmailPrivacy) {
+        setError("Please confirm the Privacy Policy acknowledgment to continue.");
+        return;
+      }
     }
 
     setSubmitting(true);
@@ -223,7 +239,7 @@ export default function Df2026DeckLeadSignupForm({
           body: JSON.stringify({
             firstName: firstName.trim(),
             lastName: lastName.trim(),
-            phone: phone.trim(),
+            phone: normalizeUsPhoneForApi(phone) || phone.trim(),
             email: email.trim() || undefined,
             source,
             companyWebsite: companyWebsite || undefined,
@@ -294,6 +310,14 @@ export default function Df2026DeckLeadSignupForm({
 
   async function handleSmsVerifySubmit(code) {
     setError("");
+    if (!investmentRange) {
+      setError("Please select an investment range.");
+      return;
+    }
+    if (!consentEmailPrivacy) {
+      setError("Please confirm the Privacy Policy acknowledgment to continue.");
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await fetch("/api/crm/df-income-deck-sms/verify", {
@@ -305,7 +329,7 @@ export default function Df2026DeckLeadSignupForm({
           source,
           firstName: firstName.trim(),
           lastName: lastName.trim(),
-          phone: phone.trim(),
+          phone: normalizeUsPhoneForApi(phone) || phone.trim(),
           email: email.trim() || undefined,
           investmentRange,
           signupMethod: "sms_otp",
@@ -375,7 +399,7 @@ export default function Df2026DeckLeadSignupForm({
   if (mode === "verify_sms") {
     return (
       <SmsVerificationStep
-        phone={pendingPhone || phone.trim()}
+        phone={pendingPhone || formatUsPhoneDisplay(phone)}
         submitting={submitting}
         submitLabel="Verify and open materials"
         error={error}
@@ -387,7 +411,33 @@ export default function Df2026DeckLeadSignupForm({
           setPendingPhone("");
           setMode("signup");
         }}
-      />
+      >
+        <div>
+          <label className={deckFormLabelClass} htmlFor={`${formId}-verify-range`}>
+            Investment range
+          </label>
+          <select
+            id={`${formId}-verify-range`}
+            className={deckFormInputClass}
+            value={investmentRange}
+            onChange={(e) => setInvestmentRange(e.target.value)}
+            required
+          >
+            <option value="">Select range</option>
+            {RANGE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <EmailConsentControls
+          privacyChecked={consentEmailPrivacy}
+          onPrivacyChange={setConsentEmailPrivacy}
+          marketingChecked={consentMarketingEmail}
+          onMarketingChange={setConsentMarketingEmail}
+        />
+      </SmsVerificationStep>
     );
   }
 
@@ -451,7 +501,7 @@ export default function Df2026DeckLeadSignupForm({
 
           {authTab === "email" && (
             <div className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className={deckFormFieldGridClass}>
                 <div>
                   <label className={deckFormLabelClass} htmlFor={`${formId}-first`}>
                     First name
@@ -511,7 +561,7 @@ export default function Df2026DeckLeadSignupForm({
 
           {authTab === "text" && (
             <div className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className={deckFormFieldGridClass}>
                 <div>
                   <label className={deckFormLabelClass} htmlFor={`${formId}-text-first`}>
                     First name
@@ -546,12 +596,17 @@ export default function Df2026DeckLeadSignupForm({
                 <input
                   id={`${formId}-text-phone`}
                   type="tel"
+                  inputMode="numeric"
                   className={deckFormInputClass}
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  autoComplete="tel"
+                  onChange={(e) => setPhone(formatUsPhoneDisplay(e.target.value))}
+                  autoComplete="tel-national"
+                  placeholder="949 245 9055"
                   required
                 />
+                <p className="mt-1 text-xs text-zinc-500">
+                  U.S. mobile only — enter 10 digits; we&apos;ll add +1 automatically.
+                </p>
               </div>
               <div>
                 <label className={deckFormLabelClass} htmlFor={`${formId}-text-email`}>
@@ -577,7 +632,7 @@ export default function Df2026DeckLeadSignupForm({
       ) : null}
 
       {mode === "capital" && !lastName.trim() && (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className={deckFormFieldGridClass}>
           {!firstName.trim() && !sessionFirstName.trim() ? (
             <div>
               <label className={deckFormLabelClass} htmlFor={`${formId}-capital-first`}>
@@ -596,20 +651,24 @@ export default function Df2026DeckLeadSignupForm({
           <div className={!firstName.trim() && !sessionFirstName.trim() ? "" : "sm:col-span-2"}>
             <label className={deckFormLabelClass} htmlFor={`${formId}-capital-last`}>
               Last name{" "}
-              <span className="font-normal text-zinc-500">(optional — helps us personalize materials)</span>
+              <span className="font-normal text-zinc-500">(optional)</span>
             </label>
+            <p id={`${formId}-capital-last-hint`} className="mt-0.5 text-xs leading-snug text-zinc-500">
+              Helps us personalize your materials.
+            </p>
             <input
               id={`${formId}-capital-last`}
               className={deckFormInputClass}
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               autoComplete="family-name"
+              aria-describedby={`${formId}-capital-last-hint`}
             />
           </div>
         </div>
       )}
 
-      {(mode === "capital" || (mode === "signup" && (authTab === "email" || authTab === "text"))) && (
+      {(mode === "capital" || (mode === "signup" && authTab === "email")) && (
         <>
       <div>
         <label className={deckFormLabelClass} htmlFor={`${formId}-range`}>
@@ -630,31 +689,6 @@ export default function Df2026DeckLeadSignupForm({
           ))}
         </select>
       </div>
-
-      {authTab === "text" ? (
-        <div className="space-y-3">
-          <label className="flex cursor-pointer gap-3 text-sm leading-snug text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={consentTransactionalSms}
-              onChange={(e) => setConsentTransactionalSms(e.target.checked)}
-              className="mt-1 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/30"
-              required
-            />
-            <span className={cn("text-xs leading-snug", brand.muted)}>{SMS_CONSENT_TRANSACTIONAL}</span>
-          </label>
-          <label className="flex cursor-pointer gap-3 text-sm leading-snug text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={consentMarketingSms}
-              onChange={(e) => setConsentMarketingSms(e.target.checked)}
-              className="mt-1 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/30"
-            />
-            <span className={cn("text-xs leading-snug", brand.muted)}>{SMS_CONSENT_MARKETING}</span>
-          </label>
-          <VoiceAiCallConsentControl checked={consentVoiceAiCall} onChange={setConsentVoiceAiCall} />
-        </div>
-      ) : null}
 
       <EmailConsentControls
         privacyChecked={consentEmailPrivacy}
@@ -677,6 +711,48 @@ export default function Df2026DeckLeadSignupForm({
         {submitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
         {submitLabel ?? defaultSubmitLabel}
       </button>
+        </>
+      )}
+
+      {mode === "signup" && authTab === "text" && (
+        <>
+          <div className="space-y-3">
+            <label className="flex cursor-pointer gap-3 text-sm leading-snug text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={consentTransactionalSms}
+                onChange={(e) => setConsentTransactionalSms(e.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/30"
+                required
+              />
+              <span className={cn("text-xs leading-snug", brand.muted)}>{SMS_CONSENT_TRANSACTIONAL}</span>
+            </label>
+            <label className="flex cursor-pointer gap-3 text-sm leading-snug text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={consentMarketingSms}
+                onChange={(e) => setConsentMarketingSms(e.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/30"
+              />
+              <span className={cn("text-xs leading-snug", brand.muted)}>{SMS_CONSENT_MARKETING}</span>
+            </label>
+            <VoiceAiCallConsentControl checked={consentVoiceAiCall} onChange={setConsentVoiceAiCall} />
+          </div>
+
+          {error && (
+            <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600" role="alert">
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={submitting || !isValidUsMobileInput(phone)}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#005EE0] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0066F5] disabled:opacity-50"
+          >
+            {submitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+            {submitLabel ?? defaultSubmitLabel}
+          </button>
         </>
       )}
 

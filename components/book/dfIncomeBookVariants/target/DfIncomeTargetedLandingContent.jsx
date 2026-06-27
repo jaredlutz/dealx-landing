@@ -7,7 +7,7 @@ import DfIncomeTargetedLeadSignup from "./DfIncomeTargetedLeadSignup";
 import DfIncomeTargetedStickyCta from "./DfIncomeTargetedStickyCta";
 import {
   DF_INCOME_OPPORTUNITY_BOOK_HREF,
-  DF_INCOME_OPPORTUNITY_HOW_HREF,
+  DF_INCOME_OPPORTUNITY_DECK_HREF,
 } from "@/lib/book/dfIncomeOpportunityUrls";
 import styles from "../../df-income-targeted.module.css";
 
@@ -87,10 +87,27 @@ function DiversyFundLogo({ className }) {
   );
 }
 
-/** DF Income booking A/B variant — promissory-note narrative (`/book/df-income/v/target`). */
-export default function DfIncomeTargetedLandingContent({ pageKey, leadSignupSource }) {
+/** DF Income booking A/B variant — promissory-note narrative (`/incomeopportunity/v/{slug}`). */
+function resolveTargetedPageClassName(theme, styles) {
+  const classes = [styles.page];
+  if (theme === "consistent-blue" || theme === "consistent-blue-dark-hero") {
+    classes.push(styles.pageConsistentBlue);
+  }
+  if (theme === "consistent-blue-dark-hero") {
+    classes.push(styles.pageConsistentBlueDarkHero);
+  }
+  return classes.join(" ");
+}
+
+export default function DfIncomeTargetedLandingContent({
+  pageKey,
+  leadSignupSource,
+  theme = "default",
+}) {
+  const pageClassName = resolveTargetedPageClassName(theme, styles);
+
   return (
-    <div className={styles.page}>
+    <div className={`marketing-light ${pageClassName}`}>
       <Suspense fallback={null}>
         <CeoDocLpViewTracker pageKey={pageKey} />
       </Suspense>
@@ -100,7 +117,6 @@ export default function DfIncomeTargetedLandingContent({ pageKey, leadSignupSour
       <header className={styles.nav}>
         <div className={`${styles.wrap} ${styles.navIn}`}>
           <DiversyFundLogo />
-          <span className={styles.navNote}>DF Income · Reg D 506(c) · Accredited investors</span>
           <a className={`${styles.btn} ${styles.btnPrimary}`} href={DF_INCOME_OPPORTUNITY_BOOK_HREF}>
             Book a private call
           </a>
@@ -116,10 +132,7 @@ export default function DfIncomeTargetedLandingContent({ pageKey, leadSignupSour
               <span className={styles.heroUrgent}>Act before the market shifts.</span>
             </h1>
             <div className={styles.heroCta}>
-              <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_HOW_HREF}>
-                See how it works →
-              </a>
-              <a className={`${styles.btn} ${styles.btnGhost} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_BOOK_HREF}>
+              <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_BOOK_HREF}>
                 Book a private call
               </a>
             </div>
@@ -325,9 +338,11 @@ export default function DfIncomeTargetedLandingContent({ pageKey, leadSignupSour
             <h2>From conversation to allocation in three steps.</h2>
             <p>Book a call, verify eligibility, and subscribe — with quarterly reporting in your dashboard.</p>
           </div>
-          <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_HOW_HREF}>
-            See how it works →
-          </a>
+          <div className={styles.secCta}>
+            <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_DECK_HREF}>
+              Request the investor deck →
+            </a>
+          </div>
         </div>
       </section>
 
@@ -352,10 +367,10 @@ export default function DfIncomeTargetedLandingContent({ pageKey, leadSignupSour
         <div className={styles.wrap}>
           <div className={styles.reach}>
             <div>
-              <h2>Book your private call.</h2>
+              <h2>Request the investor deck.</h2>
               <p className={styles.reachIntro}>
-                For accredited investors and private lenders. Tell us where you fit and we&apos;ll send the DF
-                Income materials and follow up with a time to talk with Craig or Alan.
+                For accredited investors and private lenders. Tell us where you fit and we&apos;ll send the DF Income
+                materials — via social sign-in, email, or text.
               </p>
             </div>
             <DfIncomeTargetedLeadSignup source={leadSignupSource} />
