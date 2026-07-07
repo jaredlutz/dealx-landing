@@ -36,7 +36,7 @@ const nextConfig = {
       { source: "/book/df-income/targeted", destination: v1, permanent: true },
       {
         source: "/incomeopportunity/how",
-        destination: `${v1}#reach`,
+        destination: v1,
         permanent: false,
       },
       { source: "/blog", destination: "/insights-education", permanent: true },

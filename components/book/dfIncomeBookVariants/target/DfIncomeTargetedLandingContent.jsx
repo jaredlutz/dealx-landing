@@ -3,10 +3,10 @@
 import Image from "next/image";
 import { Suspense } from "react";
 import CeoDocLpViewTracker from "@/components/analytics/CeoDocLpViewTracker";
-import DfIncomeTargetedLeadSignup from "./DfIncomeTargetedLeadSignup";
 import DfIncomeTargetedStickyCta from "./DfIncomeTargetedStickyCta";
 import {
   DF_INCOME_OPPORTUNITY_BOOK_HREF,
+  DF_INCOME_OPPORTUNITY_DECK_DOWNLOAD_FILENAME,
   DF_INCOME_OPPORTUNITY_DECK_HREF,
 } from "@/lib/book/dfIncomeOpportunityUrls";
 import styles from "../../df-income-targeted.module.css";
@@ -99,11 +99,7 @@ function resolveTargetedPageClassName(theme, styles) {
   return classes.join(" ");
 }
 
-export default function DfIncomeTargetedLandingContent({
-  pageKey,
-  leadSignupSource,
-  theme = "default",
-}) {
+export default function DfIncomeTargetedLandingContent({ pageKey, theme = "default" }) {
   const pageClassName = resolveTargetedPageClassName(theme, styles);
 
   return (
@@ -339,7 +335,11 @@ export default function DfIncomeTargetedLandingContent({
             <p>Book a call, verify eligibility, and subscribe — with quarterly reporting in your dashboard.</p>
           </div>
           <div className={styles.secCta}>
-            <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_DECK_HREF}>
+            <a
+              className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`}
+              href={DF_INCOME_OPPORTUNITY_DECK_HREF}
+              download={DF_INCOME_OPPORTUNITY_DECK_DOWNLOAD_FILENAME}
+            >
               Request the investor deck →
             </a>
           </div>
@@ -360,21 +360,6 @@ export default function DfIncomeTargetedLandingContent({
           <p className={styles.micro}>
             Accredited investors only · Regulation D, Rule 506(c) · This does not constitute an offer or commitment
           </p>
-        </div>
-      </section>
-
-      <section className={`${styles.bgPaper} ${styles.section}`} id="reach">
-        <div className={styles.wrap}>
-          <div className={styles.reach}>
-            <div>
-              <h2>Request the investor deck.</h2>
-              <p className={styles.reachIntro}>
-                For accredited investors and private lenders. Tell us where you fit and we&apos;ll send the DF Income
-                materials — via social sign-in, email, or text.
-              </p>
-            </div>
-            <DfIncomeTargetedLeadSignup source={leadSignupSource} />
-          </div>
         </div>
       </section>
 

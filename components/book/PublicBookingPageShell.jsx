@@ -4,6 +4,7 @@ import { ChevronDown, FileDown } from "lucide-react";
 import BookingBeforeCallResources from "@/components/book/BookingBeforeCallResources";
 import {
   DF_INCOME_BOOKING_DOWNLOADS,
+  DF_INCOME_PRIMARY_DECK,
   PUBLIC_BOOKING_BEFORE_CALL_BLURB,
 } from "@/lib/book/dfIncomeProductContent";
 import { cn } from "@/lib/theme";
@@ -67,12 +68,13 @@ export default function PublicBookingPageShell({
               Investor materials
             </a>
           ) : (
-            <Link
-              href="/incomeopportunity/v/1#reach"
+            <a
+              href={DF_INCOME_PRIMARY_DECK.href}
+              download={DF_INCOME_PRIMARY_DECK.downloadFilename}
               className="hidden text-sm font-medium text-zinc-600 underline-offset-4 hover:text-zinc-900 hover:underline sm:inline"
             >
               Request investor deck
-            </Link>
+            </a>
           )}
         </div>
       </header>

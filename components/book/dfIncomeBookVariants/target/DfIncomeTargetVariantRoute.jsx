@@ -5,11 +5,7 @@ import "../../df-income-targeted-shell.css";
 export default function DfIncomeTargetVariantRoute({ config }) {
   return (
     <DfIncomeTargetedShell>
-      <DfIncomeTargetedLandingContent
-        pageKey={config.pageKey}
-        leadSignupSource={config.leadSignupSource}
-        theme={config.theme}
-      />
+      <DfIncomeTargetedLandingContent pageKey={config.pageKey} theme={config.theme} />
     </DfIncomeTargetedShell>
   );
 }
