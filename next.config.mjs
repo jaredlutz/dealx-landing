@@ -20,6 +20,10 @@ const nextConfig = {
         source: "/api/track/df-income-doc/download",
         destination: `${crmBase}/api/track/df-income-doc/download`,
       },
+      {
+        source: "/api/public/collateral-download",
+        destination: `${crmBase}/api/public/collateral-download`,
+      },
     ];
   },
   async redirects() {

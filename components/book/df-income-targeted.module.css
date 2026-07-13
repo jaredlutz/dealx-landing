@@ -614,6 +614,11 @@
 	color: #fff;
 }
 
+/* Tick lists inside dark panels inherit --ink unless overridden — unreadable. */
+.panel .ticks li {
+	color: rgba(255, 255, 255, 0.9);
+}
+
 .stat {
 	display: flex;
 	align-items: baseline;
