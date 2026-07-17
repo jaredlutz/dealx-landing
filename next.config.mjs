@@ -81,6 +81,11 @@ const nextConfig = {
         destination: "/insights-education/retirement-accounts",
         permanent: true,
       },
+      {
+        source: "/collateral/business-plan",
+        destination: "/collateral/investment-thesis",
+        permanent: true,
+      },
     ];
   },
 };

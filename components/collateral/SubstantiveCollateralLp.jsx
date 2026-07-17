@@ -118,12 +118,20 @@ export default function SubstantiveCollateralLp({ content }) {
       <section className={styles.hero} id="top">
         <div className={`${styles.wrap} ${styles.heroIn}`}>
           <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>{content.eyebrow}</span>
+            {content.eyebrow ? (
+              <span className={styles.eyebrow}>{content.eyebrow}</span>
+            ) : null}
             <h1 className={styles.heroTitle}>
-              {content.heroTitleBefore}{" "}
+              {content.heroTitleBefore ? (
+                <>
+                  {content.heroTitleBefore}{" "}
+                </>
+              ) : null}
               <span className={styles.accent}>{content.heroAccent}</span>
-              {content.heroTitleAfter ?? "."}
-              <span className={styles.heroUrgent}>{content.heroUrgent}</span>
+              {content.heroTitleAfter ?? ""}
+              {content.heroUrgent ? (
+                <span className={styles.heroUrgent}>{content.heroUrgent}</span>
+              ) : null}
             </h1>
             <p
               style={{
