@@ -32,9 +32,6 @@ export const revalidate = 300;
 
 const path = "/opportunities/distressed-income-fund";
 
-/** Marketing-site contact for this offering (may differ from portal `contact_email_address`). */
-const OPPORTUNITY_QUESTIONS_EMAIL = "invest@diversyfund.com";
-
 const PORTAL_OFFERING_PATH = `/offerings/${DISTRESSED_INCOME_FUND_OFFERING_ID}`;
 
 function metaDescription(snapshot) {
@@ -310,15 +307,6 @@ export default async function DistressedIncomeFundPage() {
                     Invest Now
                   </a>
                 </div>
-                <p className={cn("text-xs leading-relaxed", brand.subtle)}>
-                  Questions:{" "}
-                  <a
-                    className="font-medium text-diversy-primary underline-offset-4 hover:underline"
-                    href={`mailto:${OPPORTUNITY_QUESTIONS_EMAIL}`}
-                  >
-                    {OPPORTUNITY_QUESTIONS_EMAIL}
-                  </a>
-                </p>
               </Card>
 
               <Card className="space-y-3 p-5 sm:p-6">
