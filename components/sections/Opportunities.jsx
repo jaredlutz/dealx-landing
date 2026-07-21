@@ -35,13 +35,13 @@ export default function Opportunities() {
               <InvestCtaButton source="opportunities">Review Current Opportunities</InvestCtaButton>
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-2">
                 <Link
-                  href="/opportunities/df-income"
+                  href="/opportunities/distressed-income-fund"
                   className={cn(
                     "text-sm font-semibold text-diversy-primary underline-offset-4 hover:underline",
                     "focus:outline-none focus-visible:ring-2 focus-visible:ring-diversy-primary/40 rounded-sm"
                   )}
                 >
-                  DF Income / Multifamily Notes
+                  Distressed Income Fund
                 </Link>
               </div>
             </div>

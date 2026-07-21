@@ -115,7 +115,7 @@ export default function StrategiesPage() {
                     Book appointment
                   </InvestCtaButton>
                   <Link
-                    href="/opportunities/df-income"
+                    href="/opportunities/distressed-income-fund"
                     className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-diversy-primary underline-offset-4 hover:underline"
                   >
                     View current offering
@@ -285,7 +285,7 @@ export default function StrategiesPage() {
               <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <InvestCtaButton source="strategies-hub-closing">Book appointment</InvestCtaButton>
                 <Link
-                  href="/opportunities/df-income"
+                  href="/opportunities/distressed-income-fund"
                   className={cn(
                     "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-border bg-background px-5 py-3 text-sm font-semibold transition",
                     "hover:border-diversy-primary/35 hover:bg-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-diversy-primary/40"

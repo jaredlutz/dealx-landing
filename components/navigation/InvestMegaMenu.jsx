@@ -22,9 +22,9 @@ const investColumns = [
     items: [
       {
         kind: "link",
-        label: "DF Income / Multifamily Notes",
-        href: "/opportunities/df-income",
-        helper: "Promissory notes · Reg D 506(c)",
+        label: "Distressed Income Fund",
+        href: "/opportunities/distressed-income-fund",
+        helper: "Preferred equity Units · Reg D 506(c)",
       },
     ],
   },

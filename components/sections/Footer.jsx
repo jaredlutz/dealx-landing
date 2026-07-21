@@ -81,10 +81,10 @@ export default function Footer() {
                 Investment thesis
               </Link>
               <Link
-                href="/opportunities/df-income"
+                href="/opportunities/distressed-income-fund"
                 className={cn("block mt-1", brand.text, "hover:opacity-80", linkFocus)}
               >
-                DF Income / Multifamily Notes
+                Distressed Income Fund
               </Link>
               <Link
                 href="/insights-education/income-vs-growth"
