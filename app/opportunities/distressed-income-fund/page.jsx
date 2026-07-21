@@ -84,10 +84,7 @@ export default async function DistressedIncomeFundPage() {
                 brand.text
               )}
             >
-              <span className="block">Earn Targeted 12–18% Annual Income</span>
-              <span className="mt-2 block text-[1.65rem] font-semibold leading-tight sm:text-3xl lg:text-[2.1rem]">
-                Preferred Equity into Discounted Multifamily
-              </span>
+              Fixed Income backed by Distressed Multifamily Real Estate
             </h1>
             <p className={cn("mt-5 max-w-3xl text-base leading-relaxed sm:text-lg", brand.muted)}>
               Institutional-style income fund focused on preferred equity investments that finance acquisitions of
@@ -288,8 +285,8 @@ export default async function DistressedIncomeFundPage() {
               <Card className="space-y-4 p-5 sm:p-6">
                 <h2 className={cn("text-base font-semibold", brand.text)}>Invest through the portal</h2>
                 <p className={cn("text-sm leading-relaxed", brand.muted)}>
-                  Create an account or sign in, confirm accreditation for Rule 506(c), and complete subscription
-                  documents for this offering.
+                  Confirm accreditation for Rule 506(c) and complete subscription documents for this offering in the
+                  portal.
                 </p>
                 <div className="flex flex-col gap-3">
                   <a
@@ -310,7 +307,7 @@ export default async function DistressedIncomeFundPage() {
                       "hover:bg-diversy-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-diversy-primary/50"
                     )}
                   >
-                    Create account
+                    Invest Now
                   </a>
                 </div>
                 <p className={cn("text-xs leading-relaxed", brand.subtle)}>
