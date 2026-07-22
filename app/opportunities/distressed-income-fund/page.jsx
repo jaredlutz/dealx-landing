@@ -1,4 +1,3 @@
-import Link from "next/link";
 import MarketingShell from "@/components/layout/MarketingShell";
 import BlogProse from "@/components/blog/BlogProse";
 import InvestCtaButton from "@/components/investment/InvestCtaButton";
@@ -318,16 +317,6 @@ export default async function DistressedIncomeFundPage() {
                   Book appointment
                 </InvestCtaButton>
               </Card>
-
-              <p className={cn("text-center text-xs leading-relaxed lg:text-left", brand.subtle)}>
-                <Link href="/documents" className="text-diversy-primary underline-offset-4 hover:underline">
-                  Firm documents
-                </Link>
-                {" · "}
-                <Link href="/offering-circular" className="text-diversy-primary underline-offset-4 hover:underline">
-                  Offering circular
-                </Link>
-              </p>
             </div>
           </aside>
         </div>
