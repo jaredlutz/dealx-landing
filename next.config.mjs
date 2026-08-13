@@ -86,6 +86,11 @@ const nextConfig = {
         destination: "/collateral/investment-thesis",
         permanent: true,
       },
+      {
+        source: "/documents/ceo-2026-fixed-income-business-plan.docx",
+        destination: "/documents/ceo-2026-fixed-income-business-plan.pdf",
+        permanent: true,
+      },
     ];
   },
 };
