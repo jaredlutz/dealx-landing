@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getWorkOS } from "@workos-inc/authkit-nextjs";
+import { safeOAuthReturnPath } from "@/lib/auth/safeOAuthReturnPath";
 import { getWorkOsRedirectUri } from "@/lib/workos-redirect-uri";
 
 export const dynamic = "force-dynamic";
@@ -33,8 +34,7 @@ export async function GET(request) {
   }
 
   const url = new URL(request.url);
-  const fromRaw = url.searchParams.get("from") ?? "/insights-education";
-  const returnPathname = fromRaw.startsWith("/") ? fromRaw : "/insights-education";
+  const returnPathname = safeOAuthReturnPath(url.searchParams.get("from"), "/insights-education");
 
   const state = btoa(JSON.stringify({ returnPathname }))
     .replace(/\+/g, "-")

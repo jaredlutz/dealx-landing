@@ -9,6 +9,7 @@ import { authkit, handleAuthkitHeaders } from "@workos-inc/authkit-nextjs";
 //   - /insights-education/*        (self-hosted sign-up gate — middleware sets session headers so
 //                                   `withAuth({ ensureSignedIn: false })` can read the WorkOS
 //                                   user in API routes that the gate UI calls)
+//   - /book/* and /incomeopportunity/*  (investor-call Google/LinkedIn return must see the session)
 //   - /api/insights-signup/*       (status read /me + LinkedIn deep-link redirector that
 //                                   uses WorkOS's built-in `provider: "LinkedInOAuth"`, no
 //                                   per-app connection id needed; the LinkedIn deep-link is
@@ -32,6 +33,8 @@ function shouldRunAuthkit(pathname) {
   if (pathname.startsWith("/admin")) return true;
   if (pathname === "/callback") return true;
   if (pathname.startsWith("/insights-education")) return true;
+  if (pathname.startsWith("/book")) return true;
+  if (pathname.startsWith("/incomeopportunity")) return true;
   if (pathname.startsWith("/api/insights-signup")) return true;
   if (pathname === "/api/insights-unlock" || pathname.startsWith("/api/insights-unlock/")) return true;
   if (pathname === "/api/lead-signup" || pathname.startsWith("/api/lead-signup/")) return true;

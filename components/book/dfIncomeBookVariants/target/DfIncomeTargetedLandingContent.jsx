@@ -4,11 +4,7 @@ import Image from "next/image";
 import { Suspense } from "react";
 import CeoDocLpViewTracker from "@/components/analytics/CeoDocLpViewTracker";
 import DfIncomeTargetedStickyCta from "./DfIncomeTargetedStickyCta";
-import {
-  DF_INCOME_OPPORTUNITY_BOOK_HREF,
-  DF_INCOME_OPPORTUNITY_DECK_DOWNLOAD_FILENAME,
-  DF_INCOME_OPPORTUNITY_DECK_HREF,
-} from "@/lib/book/dfIncomeOpportunityUrls";
+import { DF_INCOME_OPPORTUNITY_BOOK_HREF } from "@/lib/book/dfIncomeOpportunityUrls";
 import styles from "../../df-income-targeted.module.css";
 
 function TrendIcon() {
@@ -335,12 +331,8 @@ export default function DfIncomeTargetedLandingContent({ pageKey, theme = "defau
             <p>Book a call, verify eligibility, and subscribe — with quarterly reporting in your dashboard.</p>
           </div>
           <div className={styles.secCta}>
-            <a
-              className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`}
-              href={DF_INCOME_OPPORTUNITY_DECK_HREF}
-              download={DF_INCOME_OPPORTUNITY_DECK_DOWNLOAD_FILENAME}
-            >
-              Request the investor deck →
+            <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_BOOK_HREF}>
+              Book a private call →
             </a>
           </div>
         </div>

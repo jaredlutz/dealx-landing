@@ -24,8 +24,8 @@ import { brand, cn } from "@/lib/theme";
  * timeline / primary-goal / phone block.
  *
  * Three driving modes:
- *   - `signup`  — no WorkOS session yet; show LinkedIn deep-link button +
- *                 the inline email/password form.
+ *   - `signup`  — no WorkOS session yet; show Google + LinkedIn deep-link
+ *                 buttons + the inline email/password form.
  *   - `verify`  — `/api/lead-signup` returned `status: "verify_email"`.
  *                 Render `EmailVerificationStep` and POST the code to
  *                 `/api/lead-signup/verify` (with the same intent + capital
@@ -160,12 +160,17 @@ export default function LeadSignupForm({
     return match?.placeholder ?? "Profile URL or @handle";
   }, [socialPlatform]);
 
-  const linkedinHref = useMemo(() => {
-    const from = pathname && pathname.startsWith("/") ? pathname : "/";
-    return `/api/insights-signup/linkedin/start?from=${encodeURIComponent(from)}`;
-  }, [pathname]);
+  const oauthFrom = pathname && pathname.startsWith("/") ? pathname : "/";
+  const googleHref = useMemo(
+    () => `/api/insights-signup/google/start?from=${encodeURIComponent(oauthFrom)}`,
+    [oauthFrom]
+  );
+  const linkedinHref = useMemo(
+    () => `/api/insights-signup/linkedin/start?from=${encodeURIComponent(oauthFrom)}`,
+    [oauthFrom]
+  );
 
-  function handleLinkedInClick(e) {
+  function handleSocialClick(e) {
     // Stash the modal context so the provider can re-open us on return.
     if (typeof window !== "undefined") {
       try {
@@ -452,8 +457,19 @@ export default function LeadSignupForm({
       {mode === "signup" ? (
         <div className="space-y-4">
           <a
+            href={googleHref}
+            onClick={handleSocialClick}
+            className={cn(
+              "inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-xl border border-[#dadce0] bg-white px-5 py-3 text-sm font-semibold text-[#3c4043] transition",
+              "hover:bg-[#f8f9fa]",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#005EE0]/40"
+            )}
+          >
+            Sign up with Google
+          </a>
+          <a
             href={linkedinHref}
-            onClick={handleLinkedInClick}
+            onClick={handleSocialClick}
             className={cn(
               "inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition",
               "bg-[#0A66C2] text-white hover:bg-[#0a5cb0]",

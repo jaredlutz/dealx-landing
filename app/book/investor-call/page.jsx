@@ -54,7 +54,7 @@ function BookInvestorCallContent() {
   }, [pathname, searchParams]);
   const tid = searchParams.get("tid") ?? "";
   const slug = searchParams.get("slug") ?? "";
-  const bookingSource = parseLpInvestorCallBookingSource(searchParams.get("bookingSource"));
+  const bookingSource = parseLpInvestorCallBookingSource(searchParams.get("bookingSource"), pathname);
 
   const [slots, setSlots] = useState([]);
   const [bookingTz, setBookingTz] = useState("America/Los_Angeles");
@@ -119,6 +119,38 @@ function BookInvestorCallContent() {
   useEffect(() => {
     fetchSlots();
   }, [fetchSlots]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.sessionStorage.getItem("df-investor-call-pending-slot");
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed?.start && parsed?.end) {
+        setSelectedSlot({ start: parsed.start, end: parsed.end });
+        if (parsed.dateKey) setSelectedDateKey(parsed.dateKey);
+      }
+    } catch {
+      // ignore stale slot
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!selectedSlot) return;
+    try {
+      window.sessionStorage.setItem(
+        "df-investor-call-pending-slot",
+        JSON.stringify({
+          start: selectedSlot.start,
+          end: selectedSlot.end,
+          dateKey: selectedDateKey,
+        })
+      );
+    } catch {
+      // sessionStorage unavailable
+    }
+  }, [selectedSlot, selectedDateKey]);
 
   useEffect(() => {
     if (!tid || !slug) {
@@ -212,6 +244,11 @@ function BookInvestorCallContent() {
         joinUrl: data.joinUrl ?? null,
         htmlLink: data.htmlLink ?? null,
       });
+      try {
+        window.sessionStorage.removeItem("df-investor-call-pending-slot");
+      } catch {
+        // ignore
+      }
       metaTrackStandard(
         "Schedule",
         {
@@ -323,6 +360,13 @@ function BookInvestorCallContent() {
 
           {!selectedSlot ? (
             <div className="space-y-4">
+              <InvestorCallContactAuth
+                signedInEmail={sessionEmail || null}
+                signedInName={sessionName || null}
+                returnPath={bookingReturnPath}
+                manualActive={manualContact || !sessionEmail}
+                onUseManual={() => setManualContact(true)}
+              />
               <BookingSlotPicker
                 slots={slots}
                 loading={loadingSlots}
