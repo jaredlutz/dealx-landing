@@ -12,6 +12,7 @@ export default function InvestorCallContactAuth({
   returnPath = "/book/investor-call",
   onUseManual,
   manualActive,
+  oauthError,
   className,
 }) {
   const googleHref = useMemo(
@@ -36,6 +37,11 @@ export default function InvestorCallContactAuth({
 
   return (
     <div className={cn("space-y-3", className)}>
+      {oauthError ? (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+          Google / LinkedIn sign-in didn&apos;t finish. Try again, or enter your details below.
+        </p>
+      ) : null}
       <p className="text-sm font-medium text-zinc-900">Sign in to prefill your details</p>
       <div className="grid gap-2 sm:grid-cols-2">
         <a

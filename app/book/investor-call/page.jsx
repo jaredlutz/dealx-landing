@@ -49,9 +49,12 @@ function BookInvestorCallContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const bookingReturnPath = useMemo(() => {
-    const qs = searchParams.toString();
+    const kept = new URLSearchParams(searchParams.toString());
+    kept.delete("oauthError");
+    const qs = kept.toString();
     return qs ? `${pathname}?${qs}` : pathname;
   }, [pathname, searchParams]);
+  const oauthError = Boolean(searchParams.get("oauthError"));
   const tid = searchParams.get("tid") ?? "";
   const slug = searchParams.get("slug") ?? "";
   const bookingSource = parseLpInvestorCallBookingSource(searchParams.get("bookingSource"), pathname);
@@ -364,10 +367,11 @@ function BookInvestorCallContent() {
                 signedInEmail={sessionEmail || null}
                 signedInName={sessionName || null}
                 returnPath={bookingReturnPath}
+                oauthError={oauthError}
                 manualActive={manualContact || !sessionEmail}
                 onUseManual={() => setManualContact(true)}
               />
-              <BookingSlotPicker
+              <BookingSlotPicker>
                 slots={slots}
                 loading={loadingSlots}
                 bookingTimeZone={bookingTz}
@@ -416,6 +420,7 @@ function BookInvestorCallContent() {
                 signedInEmail={sessionEmail || null}
                 signedInName={sessionName || null}
                 returnPath={bookingReturnPath}
+                oauthError={oauthError}
                 manualActive={manualContact || !sessionEmail}
                 onUseManual={() => setManualContact(true)}
               />
