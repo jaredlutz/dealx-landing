@@ -371,7 +371,7 @@ function BookInvestorCallContent() {
                 manualActive={manualContact || !sessionEmail}
                 onUseManual={() => setManualContact(true)}
               />
-              <BookingSlotPicker>
+              <BookingSlotPicker
                 slots={slots}
                 loading={loadingSlots}
                 bookingTimeZone={bookingTz}
