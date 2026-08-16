@@ -26,7 +26,10 @@ import {
   INVESTOR_CALL_PAGE_TITLE,
   INVESTOR_CALL_REP_DISPLAY_NAME,
 } from "@/lib/book/investorCallBookingContent";
-import { parseLpInvestorCallBookingSource } from "@/lib/book/parseLpInvestorCallBookingSource";
+import {
+  investorCallDurationMinutes,
+  parseLpInvestorCallBookingSource,
+} from "@/lib/book/parseLpInvestorCallBookingSource";
 import { PUBLIC_BOOKING_CARD_CLASS } from "@/lib/book/publicBookingResourceLinks";
 import {
   dateKeyInTimeZone,
@@ -58,6 +61,7 @@ function BookInvestorCallContent() {
   const tid = searchParams.get("tid") ?? "";
   const slug = searchParams.get("slug") ?? "";
   const bookingSource = parseLpInvestorCallBookingSource(searchParams.get("bookingSource"), pathname);
+  const slotMinutes = investorCallDurationMinutes(bookingSource);
 
   const [slots, setSlots] = useState([]);
   const [bookingTz, setBookingTz] = useState("America/Los_Angeles");
@@ -354,7 +358,7 @@ function BookInvestorCallContent() {
           <BookingStepIndicator currentStep={currentStep} className="mb-4" />
           <BookingCardTitle>Pick a time</BookingCardTitle>
           <BookingCardDescription>
-            30-minute slots · Weekdays · next {BOOKING_BUSINESS_DAYS} business days ·{" "}
+            {slotMinutes}-minute slots · Weekdays · next {BOOKING_BUSINESS_DAYS} business days ·{" "}
             {INVESTOR_CALL_REP_DISPLAY_NAME}
           </BookingCardDescription>
         </BookingCardHeader>
