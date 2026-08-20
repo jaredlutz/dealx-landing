@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Suspense } from "react";
 import CeoDocLpViewTracker from "@/components/analytics/CeoDocLpViewTracker";
 import DfIncomeTargetedStickyCta from "./DfIncomeTargetedStickyCta";
-import { DF_INCOME_OPPORTUNITY_BOOK_HREF } from "@/lib/book/dfIncomeOpportunityUrls";
+import { useDfIncomeOpportunityBookHref } from "@/lib/book/useDfIncomeOpportunityBookHref";
 import styles from "../../df-income-targeted.module.css";
 
 function TrendIcon() {
@@ -96,6 +96,7 @@ function resolveTargetedPageClassName(theme, styles) {
 }
 
 export default function DfIncomeTargetedLandingContent({ pageKey, theme = "default" }) {
+  const bookHref = useDfIncomeOpportunityBookHref();
   const pageClassName = resolveTargetedPageClassName(theme, styles);
 
   return (
@@ -109,7 +110,7 @@ export default function DfIncomeTargetedLandingContent({ pageKey, theme = "defau
       <header className={styles.nav}>
         <div className={`${styles.wrap} ${styles.navIn}`}>
           <DiversyFundLogo />
-          <a className={`${styles.btn} ${styles.btnPrimary}`} href={DF_INCOME_OPPORTUNITY_BOOK_HREF}>
+          <a className={`${styles.btn} ${styles.btnPrimary}`} href={bookHref}>
             Book a private call
           </a>
         </div>
@@ -124,7 +125,7 @@ export default function DfIncomeTargetedLandingContent({ pageKey, theme = "defau
               <span className={styles.heroUrgent}>Act before the market shifts.</span>
             </h1>
             <div className={styles.heroCta}>
-              <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_BOOK_HREF}>
+              <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={bookHref}>
                 Book a private call
               </a>
             </div>
@@ -331,7 +332,7 @@ export default function DfIncomeTargetedLandingContent({ pageKey, theme = "defau
             <p>Book a call, verify eligibility, and subscribe — with quarterly reporting in your dashboard.</p>
           </div>
           <div className={styles.secCta}>
-            <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_BOOK_HREF}>
+            <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={bookHref}>
               Book a private call →
             </a>
           </div>
@@ -346,7 +347,7 @@ export default function DfIncomeTargetedLandingContent({ pageKey, theme = "defau
             market shifts.
           </h2>
           <p>The distressed window is open now. Book a private call.</p>
-          <a className={`${styles.btn} ${styles.btnGold} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_BOOK_HREF}>
+          <a className={`${styles.btn} ${styles.btnGold} ${styles.btnLg}`} href={bookHref}>
             Book your private call →
           </a>
           <p className={styles.micro}>
@@ -370,7 +371,7 @@ export default function DfIncomeTargetedLandingContent({ pageKey, theme = "defau
             ))}
           </div>
           <div className={styles.faqCta}>
-            <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={DF_INCOME_OPPORTUNITY_BOOK_HREF}>
+            <a className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} href={bookHref}>
               Book a private call →
             </a>
           </div>
