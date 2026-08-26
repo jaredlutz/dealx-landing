@@ -160,11 +160,13 @@ function BookInvestorCallContent() {
   }, [selectedSlot, selectedDateKey]);
 
   useEffect(() => {
-    if (!tid || !slug) {
+    if (!tid) {
       setPrefillContact(undefined);
       return;
     }
-    fetch(`/api/crm/track/prefill?tid=${encodeURIComponent(tid)}&slug=${encodeURIComponent(slug)}`)
+    const qs = new URLSearchParams({ tid });
+    if (slug) qs.set("slug", slug);
+    fetch(`/api/crm/track/prefill?${qs.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.prefill) setPrefillContact(data.prefill);
@@ -190,12 +192,12 @@ function BookInvestorCallContent() {
         if (typeof data.userId === "string") setSessionUserId(data.userId);
         if (typeof data.email === "string" && data.email) {
           setSessionEmail(data.email);
-          setEmail((prev) => prev || data.email);
+          if (!tid) setEmail((prev) => prev || data.email);
         }
         const fullName = [data.firstName, data.lastName].filter(Boolean).join(" ").trim();
         if (fullName) {
           setSessionName(fullName);
-          setName((prev) => prev || fullName);
+          if (!tid) setName((prev) => prev || fullName);
         }
       })
       .catch(() => {});
@@ -234,6 +236,8 @@ function BookInvestorCallContent() {
           bookingSource,
           idempotencyKey: idempotencyKeyRef.current,
           ...(sessionUserId ? { workosUserId: sessionUserId } : {}),
+          ...(tid ? { tid } : {}),
+          ...(prefillContact?.contactId ? { contactId: prefillContact.contactId } : {}),
         }),
       });
       const data = await res.json();
@@ -420,35 +424,50 @@ function BookInvestorCallContent() {
                   Change time
                 </BookingButton>
               </div>
-              <InvestorCallContactAuth
-                signedInEmail={sessionEmail || null}
-                signedInName={sessionName || null}
-                returnPath={bookingReturnPath}
-                oauthError={oauthError}
-                manualActive={manualContact || !sessionEmail}
-                onUseManual={() => setManualContact(true)}
-              />
-              {(manualContact || !sessionEmail) && (
+              {prefillContact?.email ? (
+                <div className="rounded-lg border border-[#005EE0]/20 bg-[#005EE0]/5 px-4 py-3 text-sm">
+                  <p className="font-medium text-zinc-900">
+                    Booking as{name.trim() ? ` ${name.trim()}` : ""}
+                  </p>
+                  <p className="mt-1 text-zinc-600">{prefillContact.email}</p>
+                </div>
+              ) : (
+                <InvestorCallContactAuth
+                  signedInEmail={sessionEmail || null}
+                  signedInName={sessionName || null}
+                  returnPath={bookingReturnPath}
+                  oauthError={oauthError}
+                  manualActive={manualContact || !sessionEmail}
+                  onUseManual={() => setManualContact(true)}
+                />
+              )}
+              {(manualContact || !email.trim() || !name.trim()) && (
                 <div className="space-y-3">
-                  <div>
-                    <BookingLabel htmlFor="inv-book-name">Name</BookingLabel>
-                    <BookingInput
-                      id="inv-book-name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div>
-                    <BookingLabel htmlFor="inv-book-email">Email</BookingLabel>
-                    <BookingInput
-                      id="inv-book-email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
-                    />
-                  </div>
+                  {!name.trim() && (
+                    <div>
+                      <BookingLabel htmlFor="inv-book-name">
+                        Name <span className="text-red-600">*</span>
+                      </BookingLabel>
+                      <BookingInput
+                        id="inv-book-name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Your name"
+                      />
+                    </div>
+                  )}
+                  {!email.trim() && (
+                    <div>
+                      <BookingLabel htmlFor="inv-book-email">Email</BookingLabel>
+                      <BookingInput
+                        id="inv-book-email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@example.com"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
               <div className="space-y-3">
