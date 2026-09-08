@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getWorkOS } from "@workos-inc/authkit-nextjs";
 import { safeOAuthReturnPath } from "@/lib/auth/safeOAuthReturnPath";
+import { DF_INCOME_INVESTOR_CALL_HREF } from "@/lib/book/dfIncomeOpportunityUrls";
 import { getWorkOsRedirectUri } from "@/lib/workos-redirect-uri";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export async function GET(request) {
   }
 
   const url = new URL(request.url);
-  const returnPathname = safeOAuthReturnPath(url.searchParams.get("from"), "/incomeopportunity/book");
+  const returnPathname = safeOAuthReturnPath(url.searchParams.get("from"), DF_INCOME_INVESTOR_CALL_HREF);
 
   const state = btoa(JSON.stringify({ returnPathname }))
     .replace(/\+/g, "-")

@@ -43,9 +43,9 @@ const FAQ_ITEMS = [
     open: true,
   },
   {
-    question: "How do the 12%, 15%, and 18% classes work?",
+    question: "How do the 12% and 15% classes work?",
     answer:
-      "There are three income classes tied to commitment size: a 12% class (minimum $100,000), a 15% class (minimum $250,000), and an 18% class (minimum $1,000,000). Stated annual rates are objectives, not guarantees, and accrue on drawn capital as described in the Private Placement Memorandum.",
+      "There are two income classes tied to commitment size: a 12% class (minimum $100,000) and a 15% class (minimum $250,000). Stated annual rates are objectives, not guarantees, and accrue on drawn capital as described in the Private Placement Memorandum.",
   },
   {
     question: "What is the money actually invested in?",
@@ -120,7 +120,7 @@ export default function DfIncomeTargetedLandingContent({ pageKey, theme = "defau
         <div className={`${styles.wrap} ${styles.heroIn}`}>
           <div className={styles.heroCopy}>
             <h1 className={styles.heroTitle}>
-              Target <span className={styles.accent}>12–18% annual income</span>, backed by today&apos;s
+              Target <span className={styles.accent}>12–15% annual income</span>, backed by today&apos;s
               distressed market.
               <span className={styles.heroUrgent}>Act before the market shifts.</span>
             </h1>
@@ -171,8 +171,8 @@ export default function DfIncomeTargetedLandingContent({ pageKey, theme = "defau
               <div className={styles.ic}>
                 <TrendIcon />
               </div>
-              <h3>Target 12–18% passive income</h3>
-              <p>Three rate classes. Distributions do the work — you operate nothing.</p>
+              <h3>Target 12–15% passive income</h3>
+              <p>Two rate classes. Distributions do the work — you operate nothing.</p>
             </div>
             <div className={styles.pillar}>
               <div className={styles.ic}>
@@ -224,16 +224,6 @@ export default function DfIncomeTargetedLandingContent({ pageKey, theme = "defau
               <div className={styles.lbl}>Target annual</div>
               <div className={styles.min}>
                 <b>$250,000</b>
-                Minimum investment
-              </div>
-            </div>
-            <div className={styles.classCard}>
-              <div className={styles.pct}>
-                18<span>%</span>
-              </div>
-              <div className={styles.lbl}>Target annual</div>
-              <div className={styles.min}>
-                <b>$1,000,000</b>
                 Minimum investment
               </div>
             </div>
@@ -394,10 +384,10 @@ export default function DfIncomeTargetedLandingContent({ pageKey, theme = "defau
             </p>
             <p>
               Investing involves risk, including the possible loss of principal. The DF Income offering consists of
-              promissory notes (debt). Stated annual rates of 12%, 15%, and 18% are objectives and targets, not
+              promissory notes (debt). Stated annual rates of 12% and 15% are objectives and targets, not
               guarantees, and accrue on drawn capital as described in the PPM. Past performance and prior real estate
               acquired do not guarantee future results. Private placements are illiquid, long-term, and speculative.
-              Minimums and rate classes are as stated in the offering documents ($100,000 / $250,000 / $1,000,000).
+              Minimums and rate classes are as stated in the offering documents ($100,000 / $250,000).
               Target capital raise is $20 million. The 2-year term is described in the PPM.
             </p>
             <p>

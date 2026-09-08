@@ -16,12 +16,12 @@ import { brand, cn } from "@/lib/theme";
 import { Check, Download, ExternalLink, FileText, Landmark } from "lucide-react";
 
 const SCAN_BULLETS = [
-  "Target: 12%–18% annual returns",
-  "Strategy: Acquire discounted multifamily debt",
-  "Term: ~2–4 year lifecycle",
+  "Target: 12%–15% annual Target Rates by Class",
+  "Strategy: Preferred equity into discounted multifamily acquisitions",
+  "Structure: DF Income promissory notes (Reg D 506(c))",
 ];
 
-const SIGNAL_ITEMS = ["$20M Target Raise", "Accredited Only", "Min: $100K", "Income Focused"];
+const SIGNAL_ITEMS = ["$35M Target Raise", "Accredited Only", "Min: $100K", "Income Focused"];
 
 export const revalidate = 300;
 

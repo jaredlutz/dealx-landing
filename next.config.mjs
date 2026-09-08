@@ -87,6 +87,21 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/lp/webinar-todays-market/register",
+        destination: "https://crm.diversyfund.com/lp/webinar-todays-market/register",
+        permanent: false,
+      },
+      {
+        source: "/lp/webinar-todays-market",
+        destination: "https://crm.diversyfund.com/lp/webinar-todays-market/register",
+        permanent: false,
+      },
+      {
+        source: "/lp/twelve-percent-fixed-income-webinar",
+        destination: "https://crm.diversyfund.com/lp/webinar-todays-market/register",
+        permanent: false,
+      },
+      {
         source: "/documents/ceo-2026-fixed-income-business-plan.docx",
         destination: "/documents/ceo-2026-fixed-income-business-plan.pdf",
         permanent: true,

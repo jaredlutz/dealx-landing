@@ -80,7 +80,7 @@ export default async function DistressedIncomeFundPage() {
                 brand.text
               )}
             >
-              Fixed Income backed by Distressed Multifamily Real Estate
+              Fixed Income backed by Distressed Real Estate
             </h1>
             <p className={cn("mt-5 max-w-3xl text-base leading-relaxed sm:text-lg", brand.muted)}>
               Institutional-style income fund focused on preferred equity investments that finance acquisitions of

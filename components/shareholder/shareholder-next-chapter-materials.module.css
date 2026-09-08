@@ -1,0 +1,11 @@
+/* Mobile: one floating download CTA — hide nav + in-copy duplicates. */
+@media (max-width: 760px) {
+	.materialsLp {
+		padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+	}
+
+	.materialsLp .navDownload,
+	.materialsLp .sectionDownload {
+		display: none;
+	}
+}
