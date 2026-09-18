@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
-import EmailConsentControls from "@/components/forms/EmailConsentControls";
 import VoiceAiCallConsentControl from "@/components/forms/VoiceAiCallConsentControl";
+import {
+  EMAIL_CONSENT_MARKETING_OPTIONAL,
+  EMAIL_CONSENT_PRIVACY_PREFIX,
+} from "@/lib/email-consent";
 import {
   CONTACT_PAGE_PRIVACY_LEAD_IN,
   CONTACT_PAGE_SMS_PARAGRAPH_1,
@@ -54,10 +57,7 @@ export default function ContactFormClient() {
       setError("Please enter a message.");
       return;
     }
-    if (showPhoneConsent && !consentMarketingSms) {
-      setError("Please confirm SMS marketing consent for the mobile number you provided, or remove the phone number.");
-      return;
-    }
+    // A2P: SMS/voice consent is voluntary — never block submission on an unchecked box.
 
     setSubmitting(true);
     try {
@@ -213,15 +213,40 @@ export default function ContactFormClient() {
         />
       </div>
 
-      <EmailConsentControls
-        privacyChecked={consentEmailPrivacy}
-        onPrivacyChange={setConsentEmailPrivacy}
-        marketingChecked={consentMarketingEmail}
-        onMarketingChange={setConsentMarketingEmail}
-      />
+      {/* A2P: all consent below is optional. Submission is never blocked on an unchecked box. */}
+      <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-4">
+        <label className="flex cursor-pointer gap-2.5">
+          <input
+            type="checkbox"
+            checked={consentEmailPrivacy}
+            onChange={(e) => setConsentEmailPrivacy(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
+          />
+          <span className={cn("text-xs leading-snug", brand.muted)}>
+            {EMAIL_CONSENT_PRIVACY_PREFIX}
+            <Link href="/privacy-policy" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
+              Privacy Policy
+            </Link>{" "}
+            and{" "}
+            <Link href="/terms-of-service" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
+              Terms of Service
+            </Link>
+            .
+          </span>
+        </label>
+        <label className="flex cursor-pointer gap-2.5">
+          <input
+            type="checkbox"
+            checked={consentMarketingEmail}
+            onChange={(e) => setConsentMarketingEmail(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
+          />
+          <span className={cn("text-xs leading-snug", brand.muted)}>{EMAIL_CONSENT_MARKETING_OPTIONAL}</span>
+        </label>
+      </div>
 
       {showPhoneConsent && (
-        <div className="rounded-lg border border-border bg-muted/40 p-4">
+        <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-4">
           <label className="flex cursor-pointer gap-2.5">
             <input
               type="checkbox"
@@ -229,12 +254,21 @@ export default function ContactFormClient() {
               onChange={(e) => setConsentMarketingSms(e.target.checked)}
               className="mt-1 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
             />
-            <span className={cn("text-xs leading-snug", brand.muted)}>{CONTACT_SMS_MARKETING_CHECKBOX_SUMMARY}</span>
+            <span className={cn("text-xs leading-snug", brand.muted)}>
+              {CONTACT_SMS_MARKETING_CHECKBOX_SUMMARY} See our{" "}
+              <Link href="/privacy-policy" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
+                Privacy Policy
+              </Link>{" "}
+              and{" "}
+              <Link href="/terms-of-service" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
+                Terms of Service
+              </Link>
+              .
+            </span>
           </label>
           <VoiceAiCallConsentControl
             checked={consentVoiceAiCall}
             onChange={setConsentVoiceAiCall}
-            className="mt-3"
           />
         </div>
       )}
@@ -264,6 +298,10 @@ export default function ContactFormClient() {
         {CONTACT_PAGE_PRIVACY_LEAD_IN}
         <Link href="/privacy-policy" className="text-diversy-primary underline-offset-2 hover:underline">
           Privacy Policy
+        </Link>{" "}
+        and{" "}
+        <Link href="/terms-of-service" className="text-diversy-primary underline-offset-2 hover:underline">
+          Terms of Service
         </Link>
         .
       </p>

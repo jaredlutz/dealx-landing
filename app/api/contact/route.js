@@ -33,12 +33,8 @@ export async function POST(request) {
     consentVoiceAiCall,
   } = body;
 
-  if (consentEmailPrivacy !== true) {
-    return NextResponse.json(
-      { ok: false, message: "Please confirm the Privacy Policy acknowledgment to submit this form." },
-      { status: 400 }
-    );
-  }
+  // A2P: consent is voluntary. Never reject a submission for an unchecked consent box;
+  // record the actual consent flags and forward them.
 
   if (!isNonEmptyString(firstName) || !isNonEmptyString(lastName)) {
     return NextResponse.json({ ok: false, message: "Name is required." }, { status: 400 });
@@ -52,12 +48,6 @@ export async function POST(request) {
 
   const phoneDigits = String(phone || "").replace(/\D/g, "");
   const hasPhone = phoneDigits.length >= 10;
-  if (hasPhone && !consentMarketingSms) {
-    return NextResponse.json(
-      { ok: false, message: "SMS marketing consent is required when a mobile number is provided." },
-      { status: 400 }
-    );
-  }
 
   const payload = {
     type: "general_contact",
@@ -68,7 +58,7 @@ export async function POST(request) {
     phone: hasPhone ? String(phone).trim() : undefined,
     message: message.trim(),
     consentMarketingSms: Boolean(consentMarketingSms),
-    consentEmailPrivacy: true,
+    consentEmailPrivacy: Boolean(consentEmailPrivacy),
     consentMarketingEmail: Boolean(consentMarketingEmail),
     consentVoiceAiCall: Boolean(consentVoiceAiCall),
     submittedAt: new Date().toISOString(),
