@@ -2,16 +2,10 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
-import VoiceAiCallConsentControl from "@/components/forms/VoiceAiCallConsentControl";
 import {
-  EMAIL_CONSENT_MARKETING_OPTIONAL,
-  EMAIL_CONSENT_PRIVACY_PREFIX,
-} from "@/lib/email-consent";
-import {
-  CONTACT_PAGE_PRIVACY_LEAD_IN,
-  CONTACT_PAGE_SMS_PARAGRAPH_1,
-  CONTACT_PAGE_SMS_PARAGRAPH_2,
-  CONTACT_SMS_MARKETING_CHECKBOX_SUMMARY,
+  A2P_ESIGN_DISCLOSURE_CHECKBOX,
+  A2P_SMS_MARKETING_CHECKBOX,
+  A2P_SMS_TRANSACTIONAL_CHECKBOX,
 } from "@/lib/contact-consent";
 import { publicInputClass, publicLabelClass } from "@/lib/public-form-styles";
 import { brand, cn } from "@/lib/theme";
@@ -33,13 +27,11 @@ export default function ContactFormClient() {
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [consentMarketingSms, setConsentMarketingSms] = useState(false);
-  const [consentVoiceAiCall, setConsentVoiceAiCall] = useState(false);
-  const [consentEmailPrivacy, setConsentEmailPrivacy] = useState(false);
-  const [consentMarketingEmail, setConsentMarketingEmail] = useState(false);
+  const [consentTransactionalSms, setConsentTransactionalSms] = useState(false);
+  const [consentEsignDisclosure, setConsentEsignDisclosure] = useState(false);
   const [companyWebsite, setCompanyWebsite] = useState("");
 
   const phoneDigits = digitsOnly(phone);
-  const showPhoneConsent = phoneDigits.length >= 10;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -70,10 +62,9 @@ export default function ContactFormClient() {
           email: email.trim(),
           phone: phone.trim() || undefined,
           message: message.trim(),
-          consentMarketingSms: showPhoneConsent ? consentMarketingSms : false,
-          consentVoiceAiCall: showPhoneConsent ? consentVoiceAiCall : false,
-          consentEmailPrivacy,
-          consentMarketingEmail,
+          consentMarketingSms,
+          consentTransactionalSms,
+          consentEsignDisclosure,
           companyWebsite: companyWebsite || undefined,
         }),
       });
@@ -213,65 +204,42 @@ export default function ContactFormClient() {
         />
       </div>
 
-      {/* A2P: all consent below is optional. Submission is never blocked on an unchecked box. */}
-      <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-4">
-        <label className="flex cursor-pointer gap-2.5">
-          <input
-            type="checkbox"
-            checked={consentEmailPrivacy}
-            onChange={(e) => setConsentEmailPrivacy(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
-          />
-          <span className={cn("text-xs leading-snug", brand.muted)}>
-            {EMAIL_CONSENT_PRIVACY_PREFIX}
-            <Link href="/privacy-policy" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
-              Privacy Policy
-            </Link>{" "}
-            and{" "}
-            <Link href="/terms-of-service" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
-              Terms of Service
-            </Link>
-            .
-          </span>
-        </label>
-        <label className="flex cursor-pointer gap-2.5">
-          <input
-            type="checkbox"
-            checked={consentMarketingEmail}
-            onChange={(e) => setConsentMarketingEmail(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
-          />
-          <span className={cn("text-xs leading-snug", brand.muted)}>{EMAIL_CONSENT_MARKETING_OPTIONAL}</span>
-        </label>
-      </div>
+      {/* A2P 10DLC: three SEPARATE consent checkboxes (Joel's example). Each is
+          unchecked by default and NONE is required to submit. Marketing and
+          transactional SMS consent stay distinct; links live in the footer. */}
+      <fieldset className="space-y-3 rounded-lg border border-border bg-muted/40 p-4">
+        <legend className="px-1 text-sm font-semibold text-foreground">Text messages</legend>
 
-      {showPhoneConsent && (
-        <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-4">
-          <label className="flex cursor-pointer gap-2.5">
-            <input
-              type="checkbox"
-              checked={consentMarketingSms}
-              onChange={(e) => setConsentMarketingSms(e.target.checked)}
-              className="mt-1 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
-            />
-            <span className={cn("text-xs leading-snug", brand.muted)}>
-              {CONTACT_SMS_MARKETING_CHECKBOX_SUMMARY} See our{" "}
-              <Link href="/privacy-policy" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
-                Privacy Policy
-              </Link>{" "}
-              and{" "}
-              <Link href="/terms-of-service" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
-                Terms of Service
-              </Link>
-              .
-            </span>
-          </label>
-          <VoiceAiCallConsentControl
-            checked={consentVoiceAiCall}
-            onChange={setConsentVoiceAiCall}
+        <label className="flex cursor-pointer gap-2.5">
+          <input
+            type="checkbox"
+            checked={consentMarketingSms}
+            onChange={(e) => setConsentMarketingSms(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
           />
-        </div>
-      )}
+          <span className={cn("text-xs leading-snug", brand.muted)}>{A2P_SMS_MARKETING_CHECKBOX}</span>
+        </label>
+
+        <label className="flex cursor-pointer gap-2.5">
+          <input
+            type="checkbox"
+            checked={consentTransactionalSms}
+            onChange={(e) => setConsentTransactionalSms(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
+          />
+          <span className={cn("text-xs leading-snug", brand.muted)}>{A2P_SMS_TRANSACTIONAL_CHECKBOX}</span>
+        </label>
+
+        <label className="flex cursor-pointer gap-2.5">
+          <input
+            type="checkbox"
+            checked={consentEsignDisclosure}
+            onChange={(e) => setConsentEsignDisclosure(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-diversy-primary focus:ring-diversy-primary/40"
+          />
+          <span className={cn("text-xs leading-snug", brand.muted)}>{A2P_ESIGN_DISCLOSURE_CHECKBOX}</span>
+        </label>
+      </fieldset>
 
       {error && (
         <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400" role="alert">
@@ -288,22 +256,20 @@ export default function ContactFormClient() {
       role="note"
       className={cn(
         "mt-6 border-t border-border/80 pt-6",
-        "space-y-3 text-xs leading-relaxed sm:text-sm",
+        "text-xs leading-relaxed sm:text-sm",
         brand.muted
       )}
     >
-      <p>{CONTACT_PAGE_SMS_PARAGRAPH_1}</p>
-      <p>{CONTACT_PAGE_SMS_PARAGRAPH_2}</p>
-      <p>
-        {CONTACT_PAGE_PRIVACY_LEAD_IN}
-        <Link href="/privacy-policy" className="text-diversy-primary underline-offset-2 hover:underline">
+      {/* A2P: Terms of Service + Privacy Policy links live in the form footer,
+          below the checkboxes — never embedded inside a checkbox label. */}
+      <p className="flex items-center gap-2">
+        <Link href="/privacy-policy" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
           Privacy Policy
-        </Link>{" "}
-        and{" "}
-        <Link href="/terms-of-service" className="text-diversy-primary underline-offset-2 hover:underline">
+        </Link>
+        <span aria-hidden="true">·</span>
+        <Link href="/terms-of-service" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
           Terms of Service
         </Link>
-        .
       </p>
     </div>
     </>

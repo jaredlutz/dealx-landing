@@ -28,9 +28,8 @@ export async function POST(request) {
     phone,
     message,
     consentMarketingSms,
-    consentEmailPrivacy,
-    consentMarketingEmail,
-    consentVoiceAiCall,
+    consentTransactionalSms,
+    consentEsignDisclosure,
   } = body;
 
   // A2P: consent is voluntary. Never reject a submission for an unchecked consent box;
@@ -58,9 +57,8 @@ export async function POST(request) {
     phone: hasPhone ? String(phone).trim() : undefined,
     message: message.trim(),
     consentMarketingSms: Boolean(consentMarketingSms),
-    consentEmailPrivacy: Boolean(consentEmailPrivacy),
-    consentMarketingEmail: Boolean(consentMarketingEmail),
-    consentVoiceAiCall: Boolean(consentVoiceAiCall),
+    consentTransactionalSms: Boolean(consentTransactionalSms),
+    consentEsignDisclosure: Boolean(consentEsignDisclosure),
     submittedAt: new Date().toISOString(),
   };
 
