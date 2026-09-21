@@ -247,14 +247,16 @@ export default function ContactFormClient() {
         </p>
       )}
 
-      <Button
-        type="submit"
-        showArrow={false}
-        disabled={submitting}
-        className="mx-auto block w-60"
-      >
-        {submitting ? "Sending…" : "Submit"}
-      </Button>
+      <div className="flex justify-center">
+        <Button
+          type="submit"
+          showArrow={false}
+          disabled={submitting}
+          className="w-60"
+        >
+          {submitting ? "Sending…" : "Submit"}
+        </Button>
+      </div>
     </form>
 
     <div
@@ -267,7 +269,7 @@ export default function ContactFormClient() {
     >
       {/* A2P: Terms of Service + Privacy Policy links live in the form footer,
           below the checkboxes — never embedded inside a checkbox label. */}
-      <p className="flex items-center gap-2">
+      <p className="flex items-center justify-center gap-2">
         <Link href="/privacy-policy" className="font-medium text-diversy-primary underline-offset-2 hover:underline">
           Privacy Policy
         </Link>
