@@ -247,7 +247,12 @@ export default function ContactFormClient() {
         </p>
       )}
 
-      <Button type="submit" showArrow={false} disabled={submitting}>
+      <Button
+        type="submit"
+        showArrow={false}
+        disabled={submitting}
+        className="mx-auto block w-60"
+      >
         {submitting ? "Sending…" : "Submit"}
       </Button>
     </form>
