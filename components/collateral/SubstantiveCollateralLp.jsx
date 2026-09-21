@@ -54,12 +54,13 @@ export default function SubstantiveCollateralLp({ content }) {
     if (tid) params.set("tid", tid);
     const anonId = getOrCreateCollateralAnonId();
     if (anonId) params.set("anonId", anonId);
-    return `/api/public/collateral-download?${params.toString()}`;
+    const path = tid?.startsWith('sp1.') ? '/api/send-plane/collateral-download' : '/api/public/collateral-download';
+    return `${path}?${params.toString()}`;
   }, [content.documentSlug, tid]);
 
   useEffect(() => {
     const anonId = getOrCreateCollateralAnonId();
-    void fetch("/api/crm/collateral-lp-view", {
+    void fetch(tid?.startsWith('sp1.') ? '/api/send-plane/collateral-view' : '/api/crm/collateral-lp-view', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
