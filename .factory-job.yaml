@@ -1,0 +1,7 @@
+id: booking-prefill-sp1
+repo: DF-Website
+agent: implement
+skills: [worktree-job]
+model: copilot-sdk
+deploy: false
+created: 2026-09-21
