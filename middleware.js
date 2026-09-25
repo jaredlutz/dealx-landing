@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { authkit, handleAuthkitHeaders } from "@workos-inc/authkit-nextjs";
+import {
+  NON_INDEXABLE_ROBOTS_TXT,
+  isIndexableHost,
+  requestHostname,
+} from "@/lib/seo/indexable-host";
 
 // Public form submissions use Next.js API routes (/api/support, /api/contact), which forward
 // server-side to portal / CRM URLs from env. No browser CORS and no secrets in the client.
@@ -41,11 +46,33 @@ function shouldRunAuthkit(pathname) {
   return false;
 }
 
+function withIndexPolicy(request, response) {
+  if (!isIndexableHost(requestHostname(request))) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+  return response;
+}
+
 export default async function middleware(request) {
   const pathname = request.nextUrl.pathname;
+  const indexable = isIndexableHost(requestHostname(request));
+
+  // Preview aliases (staging-web, *.vercel.app) must not inherit production's
+  // index,follow robots.txt just because they share a deployment.
+  if (!indexable && (pathname === "/robots.txt" || pathname === "/sitemap.xml")) {
+    const isRobots = pathname === "/robots.txt";
+    return new NextResponse(isRobots ? NON_INDEXABLE_ROBOTS_TXT : "", {
+      status: isRobots ? 200 : 404,
+      headers: {
+        "Content-Type": isRobots ? "text/plain; charset=utf-8" : "text/plain",
+        "X-Robots-Tag": "noindex, nofollow",
+        "Cache-Control": "no-store",
+      },
+    });
+  }
 
   if (!shouldRunAuthkit(pathname)) {
-    return NextResponse.next();
+    return withIndexPolicy(request, NextResponse.next());
   }
 
   const redirectUri =
@@ -67,7 +94,7 @@ export default async function middleware(request) {
       redirect: authorizationUrl ?? "/admin/login",
     });
   }
-  return handleAuthkitHeaders(request, authkitHeaders);
+  return withIndexPolicy(request, handleAuthkitHeaders(request, authkitHeaders));
 }
 
 export const config = {
